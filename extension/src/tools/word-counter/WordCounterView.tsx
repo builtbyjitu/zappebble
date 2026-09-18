@@ -17,7 +17,7 @@ interface Props {
 
 export const WordCounterView: React.FC<Props> = ({ onBack, onOpenWeb }) => {
   const [text, setText] = useState<string>(
-    'WebTools is a fast, free, and private browser utility suite. Your text stays on your device!'
+    'ZapPebble is a fast, free, and private browser utility suite. Your text stays on your device!'
   );
   const [copied, setCopied] = useState<boolean>(false);
 

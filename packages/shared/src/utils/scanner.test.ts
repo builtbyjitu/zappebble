@@ -52,7 +52,7 @@ describe('QR & Barcode Scanner Utilities', () => {
     });
 
     it('decodes a QR code image containing a plain text payload', () => {
-      const textPayload = 'Hello WebTools';
+      const textPayload = 'Hello ZapPebble';
       const { data, width, height } = createMockQrRgba(textPayload);
 
       const result = decodeQrFromImageData(data, width, height);
@@ -73,7 +73,7 @@ describe('QR & Barcode Scanner Utilities', () => {
       expect(isValidWebUrl('https://example.com')).toBe(true);
       expect(isValidWebUrl('https://sub.domain.com/path?query=1#hash')).toBe(true);
       expect(isValidWebUrl('http://localhost:3000')).toBe(true);
-      expect(isValidWebUrl('  https://webtools.local/tools  ')).toBe(true);
+      expect(isValidWebUrl('  https://zappebble.appnix.org/tools  ')).toBe(true);
     });
 
     it('strictly rejects unsafe protocols like javascript: and data:', () => {

@@ -34,7 +34,7 @@ export function ToolLayout({ tool, children }: ToolLayoutProps) {
       {/* Benefits Section */}
       <section className="mb-16">
         <h2 className="text-2xl font-bold text-center tracking-tight text-slate-900 dark:text-white mb-8">
-          Why use WebTools {tool.name}?
+          Why use ZapPebble {tool.name}?
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40">
@@ -117,7 +117,7 @@ export function ToolLayout({ tool, children }: ToolLayoutProps) {
             <span>Chrome Extension Available</span>
           </div>
           <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            Use WebTools Directly Inside Chrome
+            Use ZapPebble Directly Inside Chrome
           </h3>
           <p className="text-blue-100 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
             Get instant 1-click access to {tool.name} and 7 other free utilities without opening a new tab.

@@ -1,6 +1,6 @@
-# WebTools Chrome Extension Permissions Guide
+# ZapPebble Chrome Extension Permissions Guide
 
-WebTools adheres strictly to the Chrome Web Store **Least-Privilege Security Model**. We request only the absolute minimum permissions required to perform user-initiated utility actions.
+ZapPebble adheres strictly to the Chrome Web Store **Least-Privilege Security Model**. We request only the absolute minimum permissions required to perform user-initiated utility actions.
 
 ## Declared Permissions
 

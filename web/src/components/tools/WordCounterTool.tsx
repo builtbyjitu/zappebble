@@ -17,7 +17,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 
-const SAMPLE_TEXT = `Welcome to WebTools Word and Character Counter!
+const SAMPLE_TEXT = `Welcome to ZapPebble Word and Character Counter!
 
 This free online tool calculates word count, character count, sentence structure, paragraph count, and estimated reading time directly in your web browser in real time.
 

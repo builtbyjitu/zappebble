@@ -1,13 +1,14 @@
-# WebTools — Fast, Free & Private Browser Utilities
+# ZapPebble — Fast, Free & Private Browser Utilities
 
-> **Free Browser Tools. Fast. Private. Simple.**
-> All-in-one browser utility platform with zero infrastructure cost and 100% client-side processing.
+> **Small tools. Big time saved.**
+> *Free browser tools. Fast. Private. Simple.*
+> Developed by **Appnix Technologies** • Production: [https://zappebble.appnix.org](https://zappebble.appnix.org)
 
 ---
 
 ## 🌟 Overview
 
-WebTools is a dual-distribution browser utility platform consisting of:
+ZapPebble is a dual-distribution browser utility platform consisting of:
 1. **A responsive, SEO-optimized Web Application** built with Next.js App Router and Tailwind CSS.
 2. **A Manifest V3 Chrome Extension** built with TypeScript and Vite with minimal permissions.
 3. **A Shared Client-Side Utility Engine** where file compression, conversion, formatting, and generation happen 100% locally on the user's device.

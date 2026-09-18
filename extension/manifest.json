@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "WebTools — Fast, Free & Private Browser Utilities",
-  "short_name": "WebTools",
+  "name": "ZapPebble — Fast, Free & Private Browser Utilities",
+  "short_name": "ZapPebble",
   "version": "1.0.0",
-  "description": "Fast, free and private browser tools: Image compression, format conversion, JSON formatting, QR generation, color picker & more.",
+  "description": "Free browser tools for everyday digital work. Fast, private and client-side.",
   "icons": {
     "16": "icons/icon16.png",
     "32": "icons/icon32.png",
@@ -12,7 +12,7 @@
   },
   "action": {
     "default_popup": "index.html",
-    "default_title": "WebTools",
+    "default_title": "ZapPebble",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",

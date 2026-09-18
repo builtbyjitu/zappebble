@@ -1,6 +1,6 @@
-# Guide: Adding a New Tool to WebTools
+# Guide: Adding a New Tool to ZapPebble
 
-WebTools is architected so adding future utilities (e.g. Base64 Encoder, Markdown Previewer, UUID Generator) takes only three simple steps without modifying core layout or routing infrastructure:
+ZapPebble is architected so adding future utilities (e.g. Base64 Encoder, Markdown Previewer, UUID Generator) takes only three simple steps without modifying core layout or routing infrastructure:
 
 ## Step 1: Register Tool Metadata in `@webtools/shared`
 
@@ -20,7 +20,7 @@ Open `packages/shared/src/registry/tools.ts` and append your tool definition:
   extensionSupported: true,
   websiteSupported: true,
   seo: {
-    title: 'Free Base64 Encoder & Decoder Online | WebTools',
+    title: 'Free Base64 Encoder & Decoder Online | ZapPebble',
     description: 'Encode and decode Base64 strings and files online with zero server uploads.',
     canonicalPath: '/tools/base64-encoder',
     keywords: ['base64 encoder', 'base64 decoder', 'base64 converter']

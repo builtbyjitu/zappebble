@@ -15,11 +15,11 @@ export function Header() {
         {/* Brand Logo */}
         <Link href="/" className="flex items-center space-x-2.5 group">
           <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold shadow-md shadow-blue-500/25 group-hover:scale-105 transition-transform">
-            <span className="text-lg tracking-tighter">W</span>
+            <span className="text-lg tracking-tighter">Z</span>
           </div>
           <div>
             <span className="text-lg font-extrabold tracking-tight text-slate-900 dark:text-white">
-              Web<span className="text-blue-600 dark:text-blue-400">Tools</span>
+              Zap<span className="text-blue-600 dark:text-blue-400">Pebble</span>
             </span>
             <span className="hidden sm:inline-block ml-2 text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/80 text-blue-600 dark:text-blue-300">
               Free & Private

@@ -3,9 +3,9 @@ import type { Metadata } from 'next';
 import { ShieldCheck, Lock, CheckCircle2 } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | WebTools',
+  title: 'Privacy Policy | ZapPebble',
   description:
-    'Learn how WebTools protects your privacy through local client-side processing. Your files, documents, and code never leave your browser.',
+    'Learn how ZapPebble protects your privacy through local client-side processing. Your files, documents, and code never leave your browser.',
   alternates: {
     canonical: '/privacy'
   }
@@ -43,7 +43,7 @@ export default function PrivacyPage() {
             1. What Data We Process
           </h2>
           <p>
-            WebTools is deliberately designed with zero-knowledge data minimization principles.
+            ZapPebble is deliberately designed with zero-knowledge data minimization principles.
           </p>
           <ul className="list-disc pl-5 mt-2 space-y-1.5 text-slate-600 dark:text-slate-400">
             <li><strong>User Files & Content:</strong> Images, JSON snippets, text passages, and QR codes remain in local browser JavaScript memory and are discarded when you close or refresh the tab.</li>
@@ -66,7 +66,7 @@ export default function PrivacyPage() {
             3. Advertising & Cookies
           </h2>
           <p>
-            To keep WebTools 100% free with zero infrastructure cost to you, our website may display compliant, non-intrusive third-party advertisements (such as Google AdSense). These third-party partners may use standard cookies to serve ads based on prior visits to our website. You can adjust or opt out of personalized advertising anytime via your browser settings or privacy preference tools.
+            To keep ZapPebble 100% free with zero infrastructure cost to you, our website may display compliant, non-intrusive third-party advertisements (such as Google AdSense). These third-party partners may use standard cookies to serve ads based on prior visits to our website. You can adjust or opt out of personalized advertising anytime via your browser settings or privacy preference tools.
           </p>
           <p className="mt-2 text-xs text-slate-500">
             * Note: Our Chrome Extension contains zero advertisements and does not inject ads into external webpages.

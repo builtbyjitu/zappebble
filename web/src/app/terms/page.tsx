@@ -2,8 +2,8 @@ import React from 'react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service | WebTools',
-  description: 'Terms of service for WebTools website and Chrome extension.',
+  title: 'Terms of Service | ZapPebble',
+  description: 'Terms of service for ZapPebble website and Chrome extension.',
   alternates: {
     canonical: '/terms'
   }
@@ -27,7 +27,7 @@ export default function TermsPage() {
             1. Acceptance of Terms
           </h2>
           <p>
-            By accessing or using the WebTools website or the WebTools Chrome Extension, you agree to be bound by these Terms of Service. If you disagree with any part of these terms, please do not use our services.
+            By accessing or using the ZapPebble website or the ZapPebble Chrome Extension (operated by Appnix Technologies), you agree to be bound by these Terms of Service. If you disagree with any part of these terms, please do not use our services.
           </p>
         </section>
 
@@ -36,7 +36,7 @@ export default function TermsPage() {
             2. Permitted Use & Local Processing
           </h2>
           <p>
-            WebTools provides client-side browser utilities for personal, educational, and commercial purposes. You agree not to misuse our tools or attempt to reverse-engineer malicious payloads through the platform. You remain solely responsible for the legality of any content you process through WebTools.
+            ZapPebble provides client-side browser utilities for personal, educational, and commercial purposes. You agree not to misuse our tools or attempt to reverse-engineer malicious payloads through the platform. You remain solely responsible for the legality of any content you process through ZapPebble.
           </p>
         </section>
 
@@ -45,7 +45,7 @@ export default function TermsPage() {
             3. Disclaimer of Warranties
           </h2>
           <p>
-            WebTools is provided on an &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; basis without warranties of any kind, whether express or implied. While we strive to provide reliable and accurate browser utilities, we do not warrant that tools will be uninterrupted, error-free, or suitable for critical missions.
+            ZapPebble is provided on an &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; basis without warranties of any kind, whether express or implied. While we strive to provide reliable and accurate browser utilities, we do not warrant that tools will be uninterrupted, error-free, or suitable for critical missions.
           </p>
         </section>
 
@@ -54,7 +54,7 @@ export default function TermsPage() {
             4. Limitation of Liability
           </h2>
           <p>
-            In no event shall WebTools or its contributors be liable for any indirect, incidental, special, consequential, or punitive damages arising from the use or inability to use our tools.
+            In no event shall ZapPebble, Appnix Technologies, or its contributors be liable for any indirect, incidental, special, consequential, or punitive damages arising from the use or inability to use our tools.
           </p>
         </section>
 
@@ -63,7 +63,7 @@ export default function TermsPage() {
             5. Modifications
           </h2>
           <p>
-            We reserve the right to modify or replace these terms at any time. Continued use of WebTools following changes constitutes your acceptance of the new terms.
+            We reserve the right to modify or replace these terms at any time. Continued use of ZapPebble following changes constitutes your acceptance of the new terms.
           </p>
         </section>
       </div>

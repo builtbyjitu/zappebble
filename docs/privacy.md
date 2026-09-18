@@ -1,10 +1,10 @@
-# WebTools Privacy Architecture
+# ZapPebble Privacy Architecture
 
 ## Philosophy
 
-> Your files stay on your device whenever possible.
+> Your files are processed locally in your browser. Nothing is uploaded to our servers.
 
-Most web utility tools on the internet force users to upload their sensitive documents, pictures, and code to remote servers, incurring infrastructure costs and creating security liabilities. WebTools operates on a zero-upload client-side model.
+Most web utility tools on the internet force users to upload their sensitive documents, pictures, and code to remote servers, incurring infrastructure costs and creating security liabilities. ZapPebble operates on a zero-upload client-side model.
 
 ## Data Flow
 

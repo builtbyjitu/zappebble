@@ -25,7 +25,7 @@ interface Props {
 
 export const JsonFormatterView: React.FC<Props> = ({ onBack, onOpenWeb }) => {
   const [jsonText, setJsonText] = useState<string>(
-    '{"product":"WebTools","fast":true,"rating":5,"tags":["free","private"]}'
+    '{"product":"ZapPebble","fast":true,"rating":5,"tags":["free","private"]}'
   );
   const [indent, setIndent] = useState<JsonIndentation>(2);
   const [copied, setCopied] = useState<boolean>(false);

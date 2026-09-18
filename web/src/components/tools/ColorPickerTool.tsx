@@ -27,7 +27,8 @@ import {
   Eye
 } from 'lucide-react';
 
-const STORAGE_KEY = 'webtools_color_history';
+const STORAGE_KEY = 'zappebble_color_history';
+const LEGACY_STORAGE_KEY = 'webtools_color_history';
 
 export function ColorPickerTool() {
   const [currentHex, setCurrentHex] = useState<string>('#2563EB');
@@ -39,7 +40,7 @@ export function ColorPickerTool() {
   // Load history from localStorage
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed)) setHistory(parsed);

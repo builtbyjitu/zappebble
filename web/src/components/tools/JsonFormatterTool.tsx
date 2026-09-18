@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 
 const SAMPLE_JSON = `{
-  "product": "WebTools",
+  "product": "ZapPebble",
   "version": "1.0.0",
   "description": "Fast, free, and private browser utility suite.",
   "features": [
@@ -37,7 +37,7 @@ const SAMPLE_JSON = `{
     "Word & Character Counter"
   ],
   "author": {
-    "team": "WebTools Core",
+    "team": "Appnix Technologies",
     "license": "MIT",
     "verified": true
   },

@@ -71,6 +71,9 @@ export const Popup: React.FC = () => {
     if (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_SITE_URL) {
       return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/+$/, '');
     }
+    if (typeof import.meta !== 'undefined' && (import.meta as any).env?.PROD) {
+      return 'https://zappebble.appnix.org';
+    }
     // Default to local development server http://localhost:3000
     return 'http://localhost:3000';
   };
@@ -197,12 +200,12 @@ export const Popup: React.FC = () => {
       <header className="p-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between sticky top-0 z-10 shadow-sm">
         <div className="flex items-center space-x-2.5">
           <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold shadow-md shadow-blue-500/20">
-            <span className="text-base tracking-tighter">W</span>
+            <span className="text-base tracking-tighter">Z</span>
           </div>
           <div>
             <div className="flex items-center space-x-1.5">
               <h1 className="text-base font-bold tracking-tight text-slate-900 dark:text-white leading-none">
-                WEBTOOLS
+                ZAPPEBBLE
               </h1>
               <span className="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300">
                 v1.0
@@ -301,7 +304,7 @@ export const Popup: React.FC = () => {
           onClick={() => openWebTool()}
           className="w-full py-2 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium flex items-center justify-center space-x-1.5 transition-colors shadow-sm"
         >
-          <span>Open WebTools Full Platform</span>
+          <span>Open ZapPebble Full Platform</span>
           <ExternalLink size={13} />
         </button>
       </footer>

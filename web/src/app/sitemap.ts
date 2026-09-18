@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { TOOLS } from '@webtools/shared';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://webtools.local';
+  const baseUrl = 'https://zappebble.appnix.org';
 
   const toolUrls = TOOLS.map((tool) => ({
     url: `${baseUrl}${tool.path}`,

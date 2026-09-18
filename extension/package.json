@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "private": true,
-  "description": "Chrome extension for WebTools - Fast, free & private browser utilities",
+  "description": "Chrome extension for ZapPebble - Fast, free & private browser utilities",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

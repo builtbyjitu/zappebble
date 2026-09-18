@@ -1,8 +1,8 @@
-# WebTools Architecture Specification
+# ZapPebble Architecture Specification
 
 ## 1. Monorepo Overview
 
-WebTools is built as a lightweight, zero-infrastructure monorepo using standard npm workspaces:
+ZapPebble is built as a lightweight, zero-infrastructure monorepo using standard npm workspaces:
 
 ```
 webtools/

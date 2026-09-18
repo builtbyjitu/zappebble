@@ -1,8 +1,8 @@
-# WebTools SEO Architecture & Strategy
+# ZapPebble SEO Architecture & Strategy
 
 ## Organic Acquisition Strategy
 
-WebTools leverages organic search traffic for high-volume, high-intent developer and productivity keywords without requiring expensive paid marketing:
+ZapPebble leverages organic search traffic for high-volume, high-intent developer and productivity keywords without requiring expensive paid marketing:
 
 1. **Dedicated Static URLs:** Each tool has its own canonical route (e.g., `/tools/image-compressor`, `/tools/json-formatter`).
 2. **Comprehensive Metadata:** Every tool defines unique titles, descriptions, Open Graph cards, and keyword tags via the shared registry.

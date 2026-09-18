@@ -5,7 +5,7 @@ import { ToolCard } from '@/components/ui/ToolCard';
 import { Shield } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'All Free Browser Tools & Utilities | WebTools',
+  title: 'All Free Browser Tools & Utilities | ZapPebble',
   description:
     'Browse our full suite of free, private, and client-side browser tools. Image compressors, converters, PDF makers, JSON tools, and QR generators.',
   alternates: {

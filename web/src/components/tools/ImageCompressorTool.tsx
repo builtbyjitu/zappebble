@@ -210,7 +210,7 @@ export function ImageCompressorTool() {
       }));
 
       const zipBlob = await createZipArchive(zipEntries);
-      downloadBlob(zipBlob, `webtools-compressed-images-${Date.now()}.zip`);
+      downloadBlob(zipBlob, `zappebble-compressed-images-${Date.now()}.zip`);
     } catch (err) {
       setGeneralError('Failed to create ZIP archive: ' + (err as Error).message);
     } finally {

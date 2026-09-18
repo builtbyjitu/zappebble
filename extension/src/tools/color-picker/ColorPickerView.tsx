@@ -22,7 +22,8 @@ interface Props {
   onOpenWeb: () => void;
 }
 
-const STORAGE_KEY = 'webtools_color_history';
+const STORAGE_KEY = 'zappebble_color_history';
+const LEGACY_STORAGE_KEY = 'webtools_color_history';
 const DEFAULT_COLOR = '#3B82F6';
 
 export const ColorPickerView: React.FC<Props> = ({ onBack, onOpenWeb }) => {
@@ -42,14 +43,16 @@ export const ColorPickerView: React.FC<Props> = ({ onBack, onOpenWeb }) => {
   // Load color history from chrome.storage.local or localStorage
   useEffect(() => {
     if (typeof chrome !== 'undefined' && chrome.storage?.local) {
-      chrome.storage.local.get([STORAGE_KEY], (res) => {
+      chrome.storage.local.get([STORAGE_KEY, LEGACY_STORAGE_KEY], (res) => {
         if (Array.isArray(res[STORAGE_KEY])) {
           setHistory(res[STORAGE_KEY]);
+        } else if (Array.isArray(res[LEGACY_STORAGE_KEY])) {
+          setHistory(res[LEGACY_STORAGE_KEY]);
         }
       });
     } else if (typeof window !== 'undefined' && window.localStorage) {
       try {
-        const saved = localStorage.getItem(STORAGE_KEY);
+        const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
         if (saved) setHistory(JSON.parse(saved));
       } catch {
         // ignore

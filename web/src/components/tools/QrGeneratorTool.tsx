@@ -38,7 +38,7 @@ import {
 export function QrGeneratorTool() {
   const [type, setType] = useState<QRType>('url');
   const [urlInput, setUrlInput] = useState<string>('https://example.com');
-  const [textInput, setTextInput] = useState<string>('Hello from WebTools!');
+  const [textInput, setTextInput] = useState<string>('Hello from ZapPebble!');
   const [emailInput, setEmailInput] = useState<string>('hello@example.com');
   const [emailSubject, setEmailSubject] = useState<string>('');
   const [emailBody, setEmailBody] = useState<string>('');
@@ -146,14 +146,14 @@ export function QrGeneratorTool() {
 
   const handleDownloadPng = () => {
     if (qrDataUrl) {
-      downloadDataUrl(qrDataUrl, 'webtools-qr.png');
+      downloadDataUrl(qrDataUrl, 'zappebble-qr.png');
     }
   };
 
   const handleDownloadSvg = () => {
     if (qrSvgString) {
       const blob = new Blob([qrSvgString], { type: 'image/svg+xml' });
-      downloadBlob(blob, 'webtools-qr.svg');
+      downloadBlob(blob, 'zappebble-qr.svg');
     }
   };
 
@@ -168,7 +168,7 @@ export function QrGeneratorTool() {
   const handleReset = () => {
     setType('url');
     setUrlInput('https://example.com');
-    setTextInput('Hello from WebTools!');
+    setTextInput('Hello from ZapPebble!');
     setEmailInput('hello@example.com');
     setEmailSubject('');
     setEmailBody('');

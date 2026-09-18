@@ -5,10 +5,10 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://webtools.local'),
+  metadataBase: new URL('https://zappebble.appnix.org'),
   title: {
-    default: 'WebTools — Free Browser Tools. Fast. Private. Simple.',
-    template: '%s | WebTools'
+    default: 'ZapPebble — Free Browser Tools. Fast. Private. Simple.',
+    template: '%s | ZapPebble'
   },
   description:
     'Fast, free, and private browser tools for everyday work, study, and development. 100% client-side processing. Your files never leave your device.',
@@ -25,28 +25,28 @@ export const metadata: Metadata = {
     'qr scanner',
     'private developer tools'
   ],
-  authors: [{ name: 'WebTools Team' }],
-  creator: 'WebTools',
-  publisher: 'WebTools',
+  authors: [{ name: 'Appnix Technologies', url: 'https://zappebble.appnix.org' }],
+  creator: 'Appnix Technologies',
+  publisher: 'Appnix Technologies',
   formatDetection: {
     email: false,
     address: false,
     telephone: false
   },
   openGraph: {
-    title: 'WebTools — Free Browser Tools. Fast. Private. Simple.',
+    title: 'ZapPebble — Free Browser Tools. Fast. Private. Simple.',
     description:
       'Fast, free and private browser utilities. Image compressor, format converter, JSON validator, QR generator, color picker and more.',
-    url: 'https://webtools.local',
-    siteName: 'WebTools',
+    url: 'https://zappebble.appnix.org',
+    siteName: 'ZapPebble',
     locale: 'en_US',
     type: 'website'
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'WebTools — Fast, Free & Private Browser Tools',
+    title: 'ZapPebble — Fast, Free & Private Browser Tools',
     description:
-      'Useful free browser tools with zero infrastructure cost and 100% local processing.'
+      'Small tools. Big time saved. Free browser tools with zero infrastructure cost and 100% local processing.'
   },
   robots: {
     index: true,

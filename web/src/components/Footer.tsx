@@ -12,18 +12,18 @@ export function Footer() {
           <div className="md:col-span-1 space-y-4">
             <Link href="/" className="flex items-center space-x-2.5">
               <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold shadow-md shadow-blue-500/20">
-                <span className="text-base tracking-tighter">W</span>
+                <span className="text-base tracking-tighter">Z</span>
               </div>
               <span className="text-lg font-bold text-slate-900 dark:text-white">
-                Web<span className="text-blue-600 dark:text-blue-400">Tools</span>
+                Zap<span className="text-blue-600 dark:text-blue-400">Pebble</span>
               </span>
             </Link>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-              Fast, free, and private browser utilities for everyday work, study, and software development.
+              Small tools. Big time saved. Free, fast, and private browser utilities for everyday work, study, and software development.
             </p>
             <div className="flex items-center space-x-2 text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 p-2.5 rounded-lg">
               <ShieldCheck size={16} className="shrink-0" />
-              <span>Your files stay on your device whenever possible.</span>
+              <span>Your files are processed locally in your browser. Nothing is uploaded to our servers.</span>
             </div>
           </div>
 
@@ -76,7 +76,7 @@ export function Footer() {
                   href="/about"
                   className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
-                  About WebTools
+                  About ZapPebble
                 </Link>
               </li>
               <li>
@@ -108,7 +108,7 @@ export function Footer() {
         </div>
 
         <div className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 dark:text-slate-400 space-y-4 sm:space-y-0">
-          <p>© {new Date().getFullYear()} WebTools. All rights reserved. Free & Open Client-Side Utilities.</p>
+          <p>© {new Date().getFullYear()} ZapPebble by Appnix Technologies. All rights reserved.</p>
           <p className="flex items-center space-x-1">
             <span>Built with</span>
             <Heart size={13} className="text-red-500 fill-red-500" />

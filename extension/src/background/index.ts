@@ -1,11 +1,11 @@
 /**
- * WebTools Manifest V3 Service Worker
+ * ZapPebble Manifest V3 Service Worker
  * Handles minimal background events according to the least-privilege security model.
  */
 
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'install') {
-    console.log('[WebTools] Extension installed successfully. Client-side tools ready.');
+    console.log('[ZapPebble] Extension installed successfully. Client-side tools ready.');
   }
 });
 

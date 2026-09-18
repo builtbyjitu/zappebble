@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/api/']
     },
-    sitemap: 'https://webtools.local/sitemap.xml'
+    sitemap: 'https://zappebble.appnix.org/sitemap.xml'
   };
 }

@@ -15,7 +15,7 @@ export const TOOLS: ToolDefinition[] = [
     extensionSupported: true,
     websiteSupported: true,
     seo: {
-      title: 'Free Image Compressor Online – JPG, PNG & WebP | WebTools',
+      title: 'Free Image Compressor Online – JPG, PNG & WebP | ZapPebble',
       description: 'Compress JPG, PNG and WebP images online for free with fast, private browser-based processing. Reduce file sizes without losing visual quality.',
       canonicalPath: '/tools/image-compressor',
       keywords: ['image compressor', 'compress jpg', 'compress png', 'compress webp', 'free image optimizer', 'browser image compression']
@@ -44,7 +44,7 @@ export const TOOLS: ToolDefinition[] = [
       },
       {
         question: 'Which formats are supported?',
-        answer: 'WebTools Image Compressor supports JPG/JPEG, PNG, and WebP formats.'
+        answer: 'ZapPebble Image Compressor supports JPG/JPEG, PNG, and WebP formats.'
       },
       {
         question: 'Is there a file size limit?',
@@ -58,8 +58,8 @@ export const TOOLS: ToolDefinition[] = [
     id: 'image-converter',
     slug: 'image-converter',
     name: 'Image Converter',
-    tagline: 'Convert images between JPG, PNG, and WebP formats with optional resizing.',
-    description: 'Convert between JPG, PNG, and WebP formats effortlessly. Batch convert multiple images locally with custom resolution and quality options.',
+    tagline: 'Convert images between JPG, PNG, and WebP formats in seconds with local processing.',
+    description: 'Convert single or multiple images between JPG, PNG, and WebP locally. Customize output quality, dimensions, and download instantly.',
     category: 'image',
     categoryLabel: 'Image Tools',
     iconName: 'RefreshCw',
@@ -68,7 +68,7 @@ export const TOOLS: ToolDefinition[] = [
     extensionSupported: true,
     websiteSupported: true,
     seo: {
-      title: 'Free Image Converter Online – Convert JPG, PNG, WebP | WebTools',
+      title: 'Free Image Converter Online – Convert JPG, PNG, WebP | ZapPebble',
       description: 'Convert images between JPG, PNG, and WebP formats online for free. Fast local conversion with custom quality and resize settings.',
       canonicalPath: '/tools/image-converter',
       keywords: ['image converter', 'convert jpg to png', 'convert png to webp', 'convert webp to jpg', 'free image converter online']
@@ -117,7 +117,7 @@ export const TOOLS: ToolDefinition[] = [
     extensionSupported: true,
     websiteSupported: true,
     seo: {
-      title: 'Free Screenshot to PDF Converter Online | WebTools',
+      title: 'Free Screenshot to PDF Converter Online | ZapPebble',
       description: 'Convert screenshots and images to PDF documents online for free. Customize A4 or Letter sizes, portrait or landscape orientation, with 100% private processing.',
       canonicalPath: '/tools/screenshot-to-pdf',
       keywords: ['screenshot to pdf', 'image to pdf', 'convert screenshot to pdf', 'webpage capture to pdf', 'pdf maker']
@@ -146,7 +146,7 @@ export const TOOLS: ToolDefinition[] = [
       },
       {
         question: 'Can I convert PNG, JPG, or WebP to PDF?',
-        answer: 'Yes. WebTools accepts all standard raster image formats including PNG, JPG, JPEG, and WebP, converting them directly to standard PDF documents.'
+        answer: 'Yes. ZapPebble accepts all standard raster image formats including PNG, JPG, JPEG, and WebP, converting them directly to standard PDF documents.'
       },
       {
         question: 'Are my images uploaded to a server?',
@@ -158,7 +158,7 @@ export const TOOLS: ToolDefinition[] = [
       },
       {
         question: 'Can I use this tool without installing software?',
-        answer: 'Yes! WebTools runs instantly in any modern web browser or as a lightweight Chrome extension with zero installation or plugins required.'
+        answer: 'Yes! ZapPebble runs instantly in any modern web browser or as a lightweight Chrome extension with zero installation or plugins required.'
       }
     ],
     relatedToolSlugs: ['image-compressor', 'image-converter'],
@@ -178,7 +178,7 @@ export const TOOLS: ToolDefinition[] = [
     extensionSupported: true,
     websiteSupported: true,
     seo: {
-      title: 'Free QR Code Generator Online – PNG & SVG Download | WebTools',
+      title: 'Free QR Code Generator Online – PNG & SVG Download | ZapPebble',
       description: 'Create customized QR codes instantly for URLs, WiFi networks, emails, text, and phone numbers. Download high-resolution PNG or SVG vector files for free.',
       canonicalPath: '/tools/qr-generator',
       keywords: ['qr code generator', 'free qr generator', 'create qr code', 'wifi qr code', 'svg qr code generator']
@@ -227,7 +227,7 @@ export const TOOLS: ToolDefinition[] = [
     extensionSupported: true,
     websiteSupported: true,
     seo: {
-      title: 'Free JSON Formatter & Validator Online | WebTools',
+      title: 'Free JSON Formatter & Validator Online | ZapPebble',
       description: 'Format, validate, prettify, and minify JSON data online for free. Clear syntax highlighting and exact error line/column tracking.',
       canonicalPath: '/tools/json-formatter',
       keywords: ['json formatter', 'json validator', 'format json online', 'json pretty print', 'minify json', 'json parser']
@@ -252,7 +252,7 @@ export const TOOLS: ToolDefinition[] = [
     faq: [
       {
         question: 'Is it safe to format sensitive JSON data here?',
-        answer: 'Yes. Processing runs completely in your local browser window. WebTools does not transmit your JSON payload to any server.'
+        answer: 'Yes. Processing runs completely in your local browser window. ZapPebble does not transmit your JSON payload to any server.'
       },
       {
         question: 'Does it pinpoint syntax errors?',
@@ -276,7 +276,7 @@ export const TOOLS: ToolDefinition[] = [
     extensionSupported: true,
     websiteSupported: true,
     seo: {
-      title: 'Free Word Counter & Character Counter Online | WebTools',
+      title: 'Free Word Counter & Character Counter Online | ZapPebble',
       description: 'Count words, characters (with and without spaces), sentences, and reading time online in real time. Check SEO meta title and social post character limits.',
       canonicalPath: '/tools/word-counter',
       keywords: ['word counter', 'character counter', 'word count online', 'reading time calculator', 'sentence counter', 'letter count']
@@ -325,7 +325,7 @@ export const TOOLS: ToolDefinition[] = [
     extensionSupported: true,
     websiteSupported: true,
     seo: {
-      title: 'Free Color Picker & HEX, RGB, HSL Converter | WebTools',
+      title: 'Free Color Picker & HEX, RGB, HSL Converter | ZapPebble',
       description: 'Pick colors easily with eyedropper support, generate color codes in HEX, RGB, HSL, and manage color palettes online for free.',
       canonicalPath: '/tools/color-picker',
       keywords: ['color picker', 'eyedropper tool', 'hex to rgb', 'rgb to hsl', 'color converter', 'online color palette']
@@ -374,7 +374,7 @@ export const TOOLS: ToolDefinition[] = [
     extensionSupported: true,
     websiteSupported: true,
     seo: {
-      title: 'Free QR & Barcode Scanner Online – Safe Client-Side Scan | WebTools',
+      title: 'Free QR & Barcode Scanner Online – Safe Client-Side Scan | ZapPebble',
       description: 'Scan QR codes and barcodes online securely via webcam or image upload. Preview URLs safely before visiting with no server uploads.',
       canonicalPath: '/tools/qr-scanner',
       keywords: ['qr scanner', 'barcode scanner', 'scan qr code online', 'scan barcode from image', 'safe qr code reader']
@@ -403,7 +403,7 @@ export const TOOLS: ToolDefinition[] = [
       },
       {
         question: 'Which barcodes are supported?',
-        answer: 'WebTools supports standard 2D and 1D barcode standards including QR Code, EAN-13, EAN-8, UPC-A, UPC-E, Code 128, Code 39, and ITF.'
+        answer: 'ZapPebble supports standard 2D and 1D barcode standards including QR Code, EAN-13, EAN-8, UPC-A, UPC-E, Code 128, Code 39, and ITF.'
       },
       {
         question: 'Does the scanner upload my image or camera data?',

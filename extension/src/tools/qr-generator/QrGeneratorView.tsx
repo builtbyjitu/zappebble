@@ -37,7 +37,7 @@ interface Props {
 export const QrGeneratorView: React.FC<Props> = ({ onBack, onOpenWeb }) => {
   const [qrType, setQrType] = useState<QRType>('url');
   const [url, setUrl] = useState<string>('https://example.com');
-  const [text, setText] = useState<string>('Hello from WebTools Extension!');
+  const [text, setText] = useState<string>('Hello from ZapPebble Extension!');
   const [wifiSsid, setWifiSsid] = useState<string>('');
   const [wifiPassword, setWifiPassword] = useState<string>('');
   const [wifiSecurity, setWifiSecurity] = useState<WiFiSecurityType>('WPA');
@@ -184,13 +184,13 @@ export const QrGeneratorView: React.FC<Props> = ({ onBack, onOpenWeb }) => {
 
   const handleDownloadPng = () => {
     if (!qrDataUrl) return;
-    downloadDataUrl(qrDataUrl, `webtools-qrcode-${Date.now()}.png`);
+    downloadDataUrl(qrDataUrl, `zappebble-qrcode-${Date.now()}.png`);
   };
 
   const handleDownloadSvg = () => {
     if (!qrSvg) return;
     const blob = new Blob([qrSvg], { type: 'image/svg+xml;charset=utf-8' });
-    downloadBlob(blob, `webtools-qrcode-${Date.now()}.svg`);
+    downloadBlob(blob, `zappebble-qrcode-${Date.now()}.svg`);
   };
 
   const handleReset = () => {

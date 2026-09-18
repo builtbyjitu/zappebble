@@ -41,8 +41,8 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
     openGraph: {
       title: tool.seo.title,
       description: tool.seo.description,
-      url: `https://webtools.local${tool.path}`,
-      siteName: 'WebTools',
+      url: `https://zappebble.appnix.org${tool.path}`,
+      siteName: 'ZapPebble',
       type: 'website'
     }
   };

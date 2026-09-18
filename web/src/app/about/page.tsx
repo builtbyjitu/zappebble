@@ -3,9 +3,9 @@ import type { Metadata } from 'next';
 import { ShieldCheck, Zap, Globe, Heart } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'About WebTools — Free & Private Browser Utilities',
+  title: 'About ZapPebble — Free & Private Browser Utilities',
   description:
-    'Learn about WebTools mission: providing lightning-fast, 100% private client-side browser utilities with zero infrastructure footprint.',
+    'Learn about ZapPebble mission: providing lightning-fast, 100% private client-side browser utilities with zero infrastructure footprint.',
   alternates: {
     canonical: '/about'
   }
@@ -16,10 +16,10 @@ export default function AboutPage() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
       <div className="text-center mb-12">
         <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-          About WebTools
+          About ZapPebble
         </h1>
         <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-300">
-          Fast, free, and private browser tools built for everyday work, study, and software engineering.
+          Fast, free, and private browser tools built by Appnix Technologies for everyday work, study, and software engineering.
         </p>
       </div>
 
@@ -29,7 +29,7 @@ export default function AboutPage() {
             Our Core Mission
           </h2>
           <p className="text-blue-800 dark:text-blue-300 text-sm sm:text-base">
-            Every day, millions of people search for simple utilities like image compression, PDF conversion, or JSON formatting. Most existing websites force users to upload their sensitive files to remote servers, wait in artificial queues, or pay for expensive subscriptions. We built WebTools to change that.
+            Every day, millions of people search for simple utilities like image compression, PDF conversion, or JSON formatting. Most existing websites force users to upload their sensitive files to remote servers, wait in artificial queues, or pay for expensive subscriptions. We built ZapPebble to change that.
           </p>
         </div>
 
@@ -38,7 +38,7 @@ export default function AboutPage() {
             Zero-Server Architecture
           </h2>
           <p>
-            Modern web browsers are capable operating environments equipped with WebAssembly, HTML5 Canvas, Web Workers, and hardware-accelerated graphics. WebTools harnesses these native client-side APIs to execute complex file transformations right on your device.
+            Modern web browsers are capable operating environments equipped with WebAssembly, HTML5 Canvas, Web Workers, and hardware-accelerated graphics. ZapPebble harnesses these native client-side APIs to execute complex file transformations right on your device.
           </p>
           <p className="mt-3">
             Because processing occurs locally:

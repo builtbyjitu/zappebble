@@ -47,14 +47,14 @@ export default function HomePage() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.1] max-w-4xl mx-auto">
-            Free Browser Tools. <br className="hidden sm:inline" />
+            Small Tools. <br className="hidden sm:inline" />
             <span className="bg-linear-to-r from-blue-600 via-indigo-600 to-blue-500 bg-clip-text text-transparent">
-              Fast. Private. Simple.
+              Big Time Saved.
             </span>
           </h1>
 
           <p className="mt-6 text-lg sm:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed font-normal">
-            Fast, simple, and privacy-focused tools for work, study, and development. Your files never leave your device.
+            Free browser tools. Fast. Private. Simple. Your files are processed locally on your device with zero server uploads.
           </p>
 
           {/* Search Box */}
@@ -158,15 +158,15 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* Why WebTools Section */}
+      {/* Why ZapPebble Section */}
       <section className="py-16 sm:py-24 bg-slate-100/70 dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-              Why WebTools?
+              Why ZapPebble?
             </h2>
             <p className="mt-4 text-base text-slate-600 dark:text-slate-300">
-              We built WebTools because everyday utilities shouldn&apos;t require server uploads, slow ads, or monthly paid subscriptions.
+              We built ZapPebble because everyday utilities shouldn&apos;t require server uploads, slow ads, or monthly paid subscriptions.
             </p>
           </div>
 
@@ -279,7 +279,7 @@ export default function HomePage() {
             </div>
 
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
-              Get WebTools for Chrome
+              Get ZapPebble for Chrome
             </h2>
 
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
@@ -313,7 +313,7 @@ export default function HomePage() {
                 href="/tools"
                 className="inline-flex items-center space-x-2 px-6 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm transition-all border border-slate-700"
               >
-                <span>Explore All Web Tools</span>
+                <span>Explore All Tools</span>
               </Link>
             </div>
           </div>
