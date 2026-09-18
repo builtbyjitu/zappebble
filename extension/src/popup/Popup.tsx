@@ -34,6 +34,8 @@ import { JsonFormatterView } from '../tools/json-formatter/JsonFormatterView';
 import { WordCounterView } from '../tools/word-counter/WordCounterView';
 import { QrGeneratorView } from '../tools/qr-generator/QrGeneratorView';
 import { ColorPickerView } from '../tools/color-picker/ColorPickerView';
+import { ScreenshotPdfView } from '../tools/screenshot-pdf/ScreenshotPdfView';
+import { QrScannerView } from '../tools/qr-scanner/QrScannerView';
 
 export const Popup: React.FC = () => {
   const [activeTool, setActiveTool] = useState<string | null>(null);
@@ -78,7 +80,9 @@ export const Popup: React.FC = () => {
       'json-formatter',
       'word-counter',
       'qr-generator',
-      'color-picker'
+      'color-picker',
+      'screenshot-to-pdf',
+      'qr-scanner'
     ];
     if (supportedPopupTools.includes(tool.id)) {
       setActiveTool(tool.id);
@@ -148,6 +152,28 @@ export const Popup: React.FC = () => {
         <ColorPickerView
           onBack={() => setActiveTool(null)}
           onOpenWeb={() => openWebTool(TOOLS.find((t) => t.id === 'color-picker'))}
+        />
+      </div>
+    );
+  }
+
+  if (activeTool === 'screenshot-to-pdf') {
+    return (
+      <div className="w-[380px] min-h-[520px] max-h-[580px] bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans">
+        <ScreenshotPdfView
+          onBack={() => setActiveTool(null)}
+          onOpenWeb={() => openWebTool(TOOLS.find((t) => t.id === 'screenshot-to-pdf'))}
+        />
+      </div>
+    );
+  }
+
+  if (activeTool === 'qr-scanner') {
+    return (
+      <div className="w-[380px] min-h-[520px] max-h-[580px] bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans">
+        <QrScannerView
+          onBack={() => setActiveTool(null)}
+          onOpenWeb={() => openWebTool(TOOLS.find((t) => t.id === 'qr-scanner'))}
         />
       </div>
     );

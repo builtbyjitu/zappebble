@@ -141,12 +141,24 @@ export const TOOLS: ToolDefinition[] = [
     ],
     faq: [
       {
-        question: 'How does screenshot capture work in the Chrome Extension?',
-        answer: 'The extension uses Chrome’s native tab capture API to capture the visible tab area safely with zero external server transmission.'
+        question: 'How do I convert a screenshot to PDF?',
+        answer: 'Simply upload any PNG, JPG, or WebP screenshot file, choose your page layout preferences (size, orientation, fit, margin), and click "Generate & Download PDF".'
       },
       {
-        question: 'What page sizes are supported?',
-        answer: 'Standard A4 and US Letter sizes in both Portrait and Landscape orientations.'
+        question: 'Can I convert PNG, JPG, or WebP to PDF?',
+        answer: 'Yes. WebTools accepts all standard raster image formats including PNG, JPG, JPEG, and WebP, converting them directly to standard PDF documents.'
+      },
+      {
+        question: 'Are my images uploaded to a server?',
+        answer: 'Never. All PDF document assembly and image decoding happens 100% locally in your browser memory. Your files never leave your device.'
+      },
+      {
+        question: 'Can I choose A4, Letter, or Original Image Size?',
+        answer: 'Yes. You can select standard ISO A4, US Letter, or Original Image Size, with Portrait, Landscape, or Auto-fit orientation.'
+      },
+      {
+        question: 'Can I use this tool without installing software?',
+        answer: 'Yes! WebTools runs instantly in any modern web browser or as a lightweight Chrome extension with zero installation or plugins required.'
       }
     ],
     relatedToolSlugs: ['image-compressor', 'image-converter'],
@@ -386,12 +398,24 @@ export const TOOLS: ToolDefinition[] = [
     ],
     faq: [
       {
-        question: 'Does the scanner automatically redirect to scanned URLs?',
-        answer: 'Never. For your security, WebTools displays the decoded text and URL first, allowing you to review it before clicking to open.'
+        question: 'Can I scan a QR code from an image?',
+        answer: 'Yes! You can drag and drop or browse any screenshot or photo containing a QR code or barcode to decode it immediately.'
       },
       {
-        question: 'What barcode standards are supported?',
-        answer: 'Common formats including QR Code, EAN-13, EAN-8, UPC-A, UPC-E, and Code 128.'
+        question: 'Which barcodes are supported?',
+        answer: 'WebTools supports standard 2D and 1D barcode standards including QR Code, EAN-13, EAN-8, UPC-A, UPC-E, Code 128, Code 39, and ITF.'
+      },
+      {
+        question: 'Does the scanner upload my image or camera data?',
+        answer: 'No. All frame analysis and decoding is performed 100% locally in your browser memory. Nothing is ever sent to a remote server.'
+      },
+      {
+        question: 'Can I scan using my camera or webcam?',
+        answer: 'Yes. On devices with a camera, you can start live camera scanning with a single click. When stopped, camera hardware is immediately released.'
+      },
+      {
+        question: 'Does the scanner automatically redirect to scanned URLs?',
+        answer: 'Never. Scanned content is displayed safely as plain text first. Only if the result is a valid web link will an "Open Link" button appear for explicit navigation.'
       }
     ],
     relatedToolSlugs: ['qr-generator', 'json-formatter'],

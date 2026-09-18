@@ -12,6 +12,8 @@ import { JsonFormatterTool } from '@/components/tools/JsonFormatterTool';
 import { WordCounterTool } from '@/components/tools/WordCounterTool';
 import { QrGeneratorTool } from '@/components/tools/QrGeneratorTool';
 import { ColorPickerTool } from '@/components/tools/ColorPickerTool';
+import { ScreenshotPdfTool } from '@/components/tools/ScreenshotPdfTool';
+import { QrScannerTool } from '@/components/tools/QrScannerTool';
 
 interface ToolPageProps {
   params: {
@@ -67,6 +69,10 @@ export default function ToolPage({ params }: ToolPageProps) {
         return <QrGeneratorTool />;
       case 'color-picker':
         return <ColorPickerTool />;
+      case 'screenshot-to-pdf':
+        return <ScreenshotPdfTool />;
+      case 'qr-scanner':
+        return <QrScannerTool />;
       default:
         return (
           <div className="text-center py-12 px-4 max-w-xl mx-auto space-y-4">
