@@ -28,7 +28,11 @@ const ICON_MAP: Record<string, React.ElementType> = {
   ScanBarcode
 };
 
+import { ImageCompressorView } from '../tools/image-compressor/ImageCompressorView';
+import { ImageConverterView } from '../tools/image-converter/ImageConverterView';
+
 export const Popup: React.FC = () => {
+  const [activeTool, setActiveTool] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isDark, setIsDark] = useState(() => {
     return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -62,6 +66,36 @@ export const Popup: React.FC = () => {
       window.open(url, '_blank');
     }
   };
+
+  const handleToolClick = (tool: ToolDefinition) => {
+    if (tool.id === 'image-compressor' || tool.id === 'image-converter') {
+      setActiveTool(tool.id);
+    } else {
+      openWebTool(tool);
+    }
+  };
+
+  if (activeTool === 'image-compressor') {
+    return (
+      <div className="w-[380px] min-h-[520px] max-h-[580px] bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans">
+        <ImageCompressorView
+          onBack={() => setActiveTool(null)}
+          onOpenWeb={() => openWebTool(TOOLS.find((t) => t.id === 'image-compressor'))}
+        />
+      </div>
+    );
+  }
+
+  if (activeTool === 'image-converter') {
+    return (
+      <div className="w-[380px] min-h-[520px] max-h-[580px] bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans">
+        <ImageConverterView
+          onBack={() => setActiveTool(null)}
+          onOpenWeb={() => openWebTool(TOOLS.find((t) => t.id === 'image-converter'))}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="w-[380px] min-h-[520px] bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans">
@@ -142,7 +176,7 @@ export const Popup: React.FC = () => {
             return (
               <button
                 key={tool.id}
-                onClick={() => openWebTool(tool)}
+                onClick={() => handleToolClick(tool)}
                 className="w-full text-left group p-2.5 rounded-lg bg-white dark:bg-slate-900 hover:bg-blue-50/50 dark:hover:bg-slate-800/80 border border-slate-200/80 dark:border-slate-800/80 hover:border-blue-300 dark:hover:border-blue-700/60 transition-all flex items-start space-x-3 shadow-xs"
               >
                 <div className="p-2 rounded-md bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white dark:group-hover:bg-blue-600 dark:group-hover:text-white transition-colors shrink-0">

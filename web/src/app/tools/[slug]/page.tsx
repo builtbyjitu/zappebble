@@ -6,6 +6,8 @@ import { ToolLayout } from '@/components/ui/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
+import { ImageCompressorTool } from '@/components/tools/ImageCompressorTool';
+import { ImageConverterTool } from '@/components/tools/ImageConverterTool';
 
 interface ToolPageProps {
   params: {
@@ -47,24 +49,32 @@ export default function ToolPage({ params }: ToolPageProps) {
     notFound();
   }
 
-  return (
-    <ToolLayout tool={tool}>
-      {/* Tool Container Area: Ready for Phase 2-5 Tool engines */}
-      <div className="text-center py-12 px-4 max-w-xl mx-auto space-y-4">
-        <div className="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto shadow-xs">
-          <Sparkles size={32} />
-        </div>
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-          {tool.name} Engine
-        </h2>
-        <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-          {tool.tagline}
-        </p>
-        <div className="pt-2 flex items-center justify-center space-x-2 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
-          <ShieldCheck size={16} />
-          <span>Modular Client-Side Engine Architecture Active</span>
-        </div>
-      </div>
-    </ToolLayout>
-  );
+  const renderToolComponent = () => {
+    switch (tool.slug) {
+      case 'image-compressor':
+        return <ImageCompressorTool />;
+      case 'image-converter':
+        return <ImageConverterTool />;
+      default:
+        return (
+          <div className="text-center py-12 px-4 max-w-xl mx-auto space-y-4">
+            <div className="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto shadow-xs">
+              <Sparkles size={32} />
+            </div>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+              {tool.name} Engine
+            </h2>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              {tool.tagline}
+            </p>
+            <div className="pt-2 flex items-center justify-center space-x-2 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+              <ShieldCheck size={16} />
+              <span>Modular Client-Side Engine Architecture Active</span>
+            </div>
+          </div>
+        );
+    }
+  };
+
+  return <ToolLayout tool={tool}>{renderToolComponent()}</ToolLayout>;
 }
