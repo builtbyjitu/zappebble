@@ -8,6 +8,8 @@ import { Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import { ImageCompressorTool } from '@/components/tools/ImageCompressorTool';
 import { ImageConverterTool } from '@/components/tools/ImageConverterTool';
+import { JsonFormatterTool } from '@/components/tools/JsonFormatterTool';
+import { WordCounterTool } from '@/components/tools/WordCounterTool';
 
 interface ToolPageProps {
   params: {
@@ -55,6 +57,10 @@ export default function ToolPage({ params }: ToolPageProps) {
         return <ImageCompressorTool />;
       case 'image-converter':
         return <ImageConverterTool />;
+      case 'json-formatter':
+        return <JsonFormatterTool />;
+      case 'word-counter':
+        return <WordCounterTool />;
       default:
         return (
           <div className="text-center py-12 px-4 max-w-xl mx-auto space-y-4">

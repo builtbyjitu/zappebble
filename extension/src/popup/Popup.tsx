@@ -30,6 +30,8 @@ const ICON_MAP: Record<string, React.ElementType> = {
 
 import { ImageCompressorView } from '../tools/image-compressor/ImageCompressorView';
 import { ImageConverterView } from '../tools/image-converter/ImageConverterView';
+import { JsonFormatterView } from '../tools/json-formatter/JsonFormatterView';
+import { WordCounterView } from '../tools/word-counter/WordCounterView';
 
 export const Popup: React.FC = () => {
   const [activeTool, setActiveTool] = useState<string | null>(null);
@@ -68,7 +70,13 @@ export const Popup: React.FC = () => {
   };
 
   const handleToolClick = (tool: ToolDefinition) => {
-    if (tool.id === 'image-compressor' || tool.id === 'image-converter') {
+    const supportedPopupTools = [
+      'image-compressor',
+      'image-converter',
+      'json-formatter',
+      'word-counter'
+    ];
+    if (supportedPopupTools.includes(tool.id)) {
       setActiveTool(tool.id);
     } else {
       openWebTool(tool);
@@ -92,6 +100,28 @@ export const Popup: React.FC = () => {
         <ImageConverterView
           onBack={() => setActiveTool(null)}
           onOpenWeb={() => openWebTool(TOOLS.find((t) => t.id === 'image-converter'))}
+        />
+      </div>
+    );
+  }
+
+  if (activeTool === 'json-formatter') {
+    return (
+      <div className="w-[380px] min-h-[520px] max-h-[580px] bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans">
+        <JsonFormatterView
+          onBack={() => setActiveTool(null)}
+          onOpenWeb={() => openWebTool(TOOLS.find((t) => t.id === 'json-formatter'))}
+        />
+      </div>
+    );
+  }
+
+  if (activeTool === 'word-counter') {
+    return (
+      <div className="w-[380px] min-h-[520px] max-h-[580px] bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans">
+        <WordCounterView
+          onBack={() => setActiveTool(null)}
+          onOpenWeb={() => openWebTool(TOOLS.find((t) => t.id === 'word-counter'))}
         />
       </div>
     );
