@@ -1,0 +1,31 @@
+{
+  "name": "webtools",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fast, free and private browser tools for everyday work, study and development.",
+  "workspaces": [
+    "packages/*",
+    "web",
+    "extension"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace=web",
+    "dev:ext": "npm run dev --workspace=extension",
+    "build": "npm run build --workspaces",
+    "build:shared": "npm run build --workspace=packages/shared",
+    "build:web": "npm run build --workspace=web",
+    "build:extension": "npm run build --workspace=extension",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.0"
+  },
+  "keywords": [
+    "browser-tools",
+    "chrome-extension",
+    "privacy-first",
+    "client-side"
+  ],
+  "license": "MIT"
+}
