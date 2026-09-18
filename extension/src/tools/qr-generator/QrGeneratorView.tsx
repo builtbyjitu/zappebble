@@ -36,7 +36,7 @@ interface Props {
 
 export const QrGeneratorView: React.FC<Props> = ({ onBack, onOpenWeb }) => {
   const [qrType, setQrType] = useState<QRType>('url');
-  const [url, setUrl] = useState<string>('https://webtools.local');
+  const [url, setUrl] = useState<string>('https://example.com');
   const [text, setText] = useState<string>('Hello from WebTools Extension!');
   const [wifiSsid, setWifiSsid] = useState<string>('');
   const [wifiPassword, setWifiPassword] = useState<string>('');
@@ -195,7 +195,7 @@ export const QrGeneratorView: React.FC<Props> = ({ onBack, onOpenWeb }) => {
 
   const handleReset = () => {
     setQrType('url');
-    setUrl('https://webtools.local');
+    setUrl('https://example.com');
     setText('');
     setWifiSsid('');
     setWifiPassword('');

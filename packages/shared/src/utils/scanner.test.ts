@@ -1,12 +1,73 @@
 import { describe, it, expect } from 'vitest';
+import QRCode from 'qrcode';
 import {
   isValidWebUrl,
   normalizeBarcodeFormat,
   decodeCode39FromRuns,
-  decodeEan13FromBits
+  decodeEan13FromBits,
+  decodeQrFromImageData
 } from './scanner';
 
+/**
+ * Helper to generate raw RGBA pixel buffers of QR codes for unit testing without DOM canvas.
+ */
+function createMockQrRgba(payload: string): { data: Uint8ClampedArray; width: number; height: number } {
+  const qr = QRCode.create(payload);
+  const margin = 4;
+  const scale = 4;
+  const size = (qr.modules.size + 2 * margin) * scale;
+  const rgba = new Uint8ClampedArray(size * size * 4);
+
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const modX = Math.floor(x / scale) - margin;
+      const modY = Math.floor(y / scale) - margin;
+      const isDark =
+        modX >= 0 &&
+        modX < qr.modules.size &&
+        modY >= 0 &&
+        modY < qr.modules.size &&
+        qr.modules.get(modX, modY);
+      const val = isDark ? 0 : 255;
+      const idx = (y * size + x) * 4;
+      rgba[idx] = val;
+      rgba[idx + 1] = val;
+      rgba[idx + 2] = val;
+      rgba[idx + 3] = 255;
+    }
+  }
+
+  return { data: rgba, width: size, height: size };
+}
+
 describe('QR & Barcode Scanner Utilities', () => {
+  describe('QR Code Decoding Engine (jsQR fallback)', () => {
+    it('decodes a QR code image containing a URL payload', () => {
+      const urlPayload = 'https://example.com';
+      const { data, width, height } = createMockQrRgba(urlPayload);
+
+      const result = decodeQrFromImageData(data, width, height);
+      expect(result).toBe(urlPayload);
+      expect(isValidWebUrl(result!)).toBe(true);
+    });
+
+    it('decodes a QR code image containing a plain text payload', () => {
+      const textPayload = 'Hello WebTools';
+      const { data, width, height } = createMockQrRgba(textPayload);
+
+      const result = decodeQrFromImageData(data, width, height);
+      expect(result).toBe(textPayload);
+      expect(isValidWebUrl(result!)).toBe(false);
+    });
+
+    it('returns null for empty or solid white image buffer', () => {
+      const size = 100;
+      const emptyBuffer = new Uint8ClampedArray(size * size * 4).fill(255);
+      const result = decodeQrFromImageData(emptyBuffer, size, size);
+      expect(result).toBeNull();
+    });
+  });
+
   describe('URL Safety & Validation', () => {
     it('accepts valid HTTPS and HTTP URLs', () => {
       expect(isValidWebUrl('https://example.com')).toBe(true);
@@ -51,13 +112,6 @@ describe('QR & Barcode Scanner Utilities', () => {
 
   describe('Code 39 Fallback Decoder', () => {
     it('decodes Code 39 bar/space runs correctly', () => {
-      // Code 39 for "*A*"
-      // Narrow = 1 unit, Wide = 3 units
-      // Start '*' = '010010100' -> runs: 1, 3, 1, 1, 3, 1, 3, 1, 1
-      // Gap = 1
-      // 'A' = '100001001' -> runs: 3, 1, 1, 1, 1, 3, 1, 1, 3
-      // Gap = 1
-      // Stop '*' = '010010100' -> runs: 1, 3, 1, 1, 3, 1, 3, 1, 1
       const start = [1, 3, 1, 1, 3, 1, 3, 1, 1, 1];
       const charA = [3, 1, 1, 1, 1, 3, 1, 1, 3, 1];
       const stop = [1, 3, 1, 1, 3, 1, 3, 1, 1];
@@ -74,13 +128,6 @@ describe('QR & Barcode Scanner Utilities', () => {
 
   describe('EAN-13 Fallback Decoder', () => {
     it('validates and decodes known EAN-13 bit pattern', () => {
-      // Known EAN-13: 4006381333931
-      // Start: 101
-      // Left 6 digits: L/G encoded
-      // Center guard: 01010
-      // Right 6 digits: R encoded
-      // End guard: 101
-      // Let's test with an invalid bit sequence first:
       expect(decodeEan13FromBits('101000000000000')).toBeNull();
       expect(decodeEan13FromBits('')).toBeNull();
     });

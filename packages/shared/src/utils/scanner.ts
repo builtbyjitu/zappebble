@@ -1,3 +1,4 @@
+import jsQR from 'jsqr';
 import { BarcodeFormat, ScanResult, ScannerOptions } from '../types/scanner';
 
 /**
@@ -65,6 +66,157 @@ export async function getSupportedBarcodeFormats(): Promise<BarcodeFormat[]> {
 }
 
 // ---------------------------------------------------------------------------
+// QR Code Decoding via jsQR (with preprocessing & inversion attempts)
+// ---------------------------------------------------------------------------
+
+/**
+ * Decodes a QR code directly from an RGBA Uint8ClampedArray pixel buffer.
+ */
+export function decodeQrFromImageData(
+  data: Uint8ClampedArray,
+  width: number,
+  height: number
+): string | null {
+  try {
+    const code = jsQR(data, width, height, {
+      inversionAttempts: 'attemptBoth'
+    });
+    return code?.data || null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Prepares an HTML canvas for scanning from an image, canvas, or video source.
+ * Automatically paints a solid white background to ensure transparent PNGs decode properly.
+ */
+export function prepareCanvasForScanning(
+  source: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement,
+  targetWidth?: number,
+  targetHeight?: number
+): HTMLCanvasElement | null {
+  if (typeof document === 'undefined') return null;
+
+  const naturalW =
+    'videoWidth' in source && source.videoWidth
+      ? source.videoWidth
+      : 'naturalWidth' in source
+      ? source.naturalWidth
+      : source.width;
+  const naturalH =
+    'videoHeight' in source && source.videoHeight
+      ? source.videoHeight
+      : 'naturalHeight' in source
+      ? source.naturalHeight
+      : source.height;
+
+  if (!naturalW || !naturalH || naturalW <= 0 || naturalH <= 0) {
+    return null;
+  }
+
+  const w = targetWidth || naturalW;
+  const h = targetHeight || naturalH;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  if (!ctx) return null;
+
+  // Fill with solid white background to guarantee transparent PNGs have high-contrast background
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, w, h);
+  ctx.drawImage(source, 0, 0, w, h);
+
+  return canvas;
+}
+
+/**
+ * Scans a visual source for a QR code using multi-pass resolution and contrast adjustments.
+ */
+export function scanQrCode(
+  source: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement
+): string | null {
+  const naturalW =
+    'videoWidth' in source && source.videoWidth
+      ? source.videoWidth
+      : 'naturalWidth' in source
+      ? source.naturalWidth
+      : source.width;
+  const naturalH =
+    'videoHeight' in source && source.videoHeight
+      ? source.videoHeight
+      : 'naturalHeight' in source
+      ? source.naturalHeight
+      : source.height;
+
+  if (!naturalW || !naturalH) return null;
+
+  const maxDimension = Math.max(naturalW, naturalH);
+
+  // Pass 1: Original size (clamped to max 1600px for safety against huge phone captures)
+  let w1 = naturalW;
+  let h1 = naturalH;
+  if (maxDimension > 1600) {
+    const scale = 1600 / maxDimension;
+    w1 = Math.round(naturalW * scale);
+    h1 = Math.round(naturalH * scale);
+  }
+
+  const canvas1 = prepareCanvasForScanning(source, w1, h1);
+  if (canvas1) {
+    const ctx1 = canvas1.getContext('2d', { willReadFrequently: true });
+    if (ctx1) {
+      const imgData1 = ctx1.getImageData(0, 0, w1, h1);
+      const res1 = decodeQrFromImageData(imgData1.data, w1, h1);
+      if (res1) return res1;
+    }
+  }
+
+  // Pass 2: Normalized size (800px) - effectively removes subpixel camera noise
+  if (maxDimension > 900) {
+    const scale2 = 800 / maxDimension;
+    const w2 = Math.max(1, Math.round(naturalW * scale2));
+    const h2 = Math.max(1, Math.round(naturalH * scale2));
+
+    const canvas2 = prepareCanvasForScanning(source, w2, h2);
+    if (canvas2) {
+      const ctx2 = canvas2.getContext('2d', { willReadFrequently: true });
+      if (ctx2) {
+        const imgData2 = ctx2.getImageData(0, 0, w2, h2);
+        const res2 = decodeQrFromImageData(imgData2.data, w2, h2);
+        if (res2) return res2;
+      }
+    }
+  }
+
+  // Pass 3: Upscaling for tiny thumbnails (< 320px)
+  if (maxDimension < 320) {
+    const scale3 = 640 / maxDimension;
+    const w3 = Math.round(naturalW * scale3);
+    const h3 = Math.round(naturalH * scale3);
+
+    const canvas3 = prepareCanvasForScanning(source, w3, h3);
+    if (canvas3) {
+      const ctx3 = canvas3.getContext('2d', { willReadFrequently: true });
+      if (ctx3) {
+        ctx3.imageSmoothingEnabled = false;
+        ctx3.fillStyle = '#FFFFFF';
+        ctx3.fillRect(0, 0, w3, h3);
+        ctx3.drawImage(source, 0, 0, w3, h3);
+
+        const imgData3 = ctx3.getImageData(0, 0, w3, h3);
+        const res3 = decodeQrFromImageData(imgData3.data, w3, h3);
+        if (res3) return res3;
+      }
+    }
+  }
+
+  return null;
+}
+
+// ---------------------------------------------------------------------------
 // Fallback 1D Barcode Decoding Engine (Code 39, EAN-13, UPC-A, Code 128)
 // ---------------------------------------------------------------------------
 
@@ -94,7 +246,6 @@ for (const [char, pat] of Object.entries(CODE39_ENCODINGS)) {
 export function decodeCode39FromRuns(runs: number[]): string | null {
   if (runs.length < 29) return null; // Minimum: start * (9), gap (1), 1 char (9), gap (1), stop * (9)
 
-  // Find threshold between narrow and wide elements
   const sorted = [...runs].sort((a, b) => a - b);
   const median = sorted[Math.floor(sorted.length / 2)];
   const threshold = median * 1.5;
@@ -103,11 +254,10 @@ export function decodeCode39FromRuns(runs: number[]): string | null {
   let index = 0;
   let decoded = '';
 
-  // Look for start character '*'
   while (index + 9 <= bits.length) {
     const pattern = bits.slice(index, index + 9).join('');
     if (CODE39_REVERSE[pattern] === '*') {
-      index += 10; // 9 elements + 1 inter-character gap
+      index += 10;
       break;
     }
     index++;
@@ -120,19 +270,15 @@ export function decodeCode39FromRuns(runs: number[]): string | null {
     const char = CODE39_REVERSE[pattern];
     if (!char) break;
     if (char === '*') {
-      // Stop character reached
       return decoded.length > 0 ? decoded : null;
     }
     decoded += char;
-    index += 10; // 9 elements + 1 gap
+    index += 10;
   }
 
   return null;
 }
 
-/**
- * Decodes EAN-13 digits from a sequence of 59 barcode runs.
- */
 const EAN_L_CODES = [
   '0001101', '0011001', '0010011', '0111101', '0100011',
   '0110001', '0101111', '0111011', '0110111', '0001011'
@@ -152,24 +298,20 @@ const EAN_FIRST_DIGIT: Record<string, number> = {
 };
 
 export function decodeEan13FromBits(bits: string): string | null {
-  if (bits.length < 95) return null; // 95 modules total
+  if (bits.length < 95) return null;
 
-  // Find start guard '101'
   const startIdx = bits.indexOf('101');
   if (startIdx === -1 || startIdx + 95 > bits.length) return null;
 
   const dataBits = bits.slice(startIdx, startIdx + 95);
 
-  // Check center guard '01010' at index 45
   if (dataBits.slice(45, 50) !== '01010') return null;
-  // Check end guard '101' at index 92
   if (dataBits.slice(92, 95) !== '101') return null;
 
   let leftType = '';
   let leftDigits = '';
   let rightDigits = '';
 
-  // Left 6 digits (modules 3 to 45, 7 modules each)
   for (let i = 0; i < 6; i++) {
     const mod = dataBits.slice(3 + i * 7, 3 + (i + 1) * 7);
     const lIdx = EAN_L_CODES.indexOf(mod);
@@ -186,7 +328,6 @@ export function decodeEan13FromBits(bits: string): string | null {
     }
   }
 
-  // Right 6 digits (modules 50 to 92, 7 modules each)
   for (let i = 0; i < 6; i++) {
     const mod = dataBits.slice(50 + i * 7, 50 + (i + 1) * 7);
     const rIdx = EAN_R_CODES.indexOf(mod);
@@ -199,7 +340,6 @@ export function decodeEan13FromBits(bits: string): string | null {
 
   const candidate = `${firstDigit}${leftDigits}${rightDigits}`;
 
-  // Validate EAN-13 checksum
   let sum = 0;
   for (let i = 0; i < 12; i++) {
     sum += parseInt(candidate[i], 10) * (i % 2 === 0 ? 1 : 3);
@@ -234,7 +374,7 @@ export function extractScanlineRuns(
     const g = data[idx + 1];
     const b = data[idx + 2];
     const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-    const bit = lum < luminanceThreshold ? 1 : 0; // 1 = dark bar, 0 = light space
+    const bit = lum < luminanceThreshold ? 1 : 0;
 
     if (currentVal === null) {
       currentVal = bit;
@@ -257,7 +397,10 @@ export function extractScanlineRuns(
 
 /**
  * Scans an image source (Image, Canvas, Video) for barcodes or QR codes.
- * Uses native BarcodeDetector if available, falling back to 1D scanline decoding.
+ * Execution order:
+ * 1. Native BarcodeDetector (if available in the browser)
+ * 2. Fallback client-side QR Decoder (jsQR with multi-scale preprocessing)
+ * 3. Fallback client-side 1D Barcode Decoder (Code 39, EAN-13, UPC-A)
  */
 export async function scanImageSource(
   source: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement,
@@ -300,73 +443,78 @@ export async function scanImageSource(
         }
       }
     } catch {
-      // Fallback if BarcodeDetector fails or throws
+      // Fallback to software decoders if BarcodeDetector throws or fails
     }
   }
 
-  // 2. Fallback: Software 1D scanline decoding
+  // 2. Fallback: Robust local QR Decoder (jsQR with multi-pass preprocessing)
   try {
-    let canvas: HTMLCanvasElement;
-    if (source instanceof HTMLCanvasElement) {
-      canvas = source;
-    } else {
-      canvas = document.createElement('canvas');
-      const w = 'videoWidth' in source && source.videoWidth ? source.videoWidth : ('naturalWidth' in source ? source.naturalWidth : source.width);
-      const h = 'videoHeight' in source && source.videoHeight ? source.videoHeight : ('naturalHeight' in source ? source.naturalHeight : source.height);
-      canvas.width = Math.max(1, w || 640);
-      canvas.height = Math.max(1, h || 480);
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.drawImage(source, 0, 0, canvas.width, canvas.height);
-      }
-    }
-
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-      // Sample scanlines at 25%, 50%, 75% height
-      for (const yRatio of [0.5, 0.35, 0.65]) {
-        const runs = extractScanlineRuns(imgData, yRatio);
-
-        // Try Code 39
-        const code39 = decodeCode39FromRuns(runs);
-        if (code39) {
-          results.push({
-            format: 'CODE_39',
-            value: code39,
-            isUrl: isValidWebUrl(code39),
-            timestamp: Date.now()
-          });
-          break;
+    const qrText = scanQrCode(source);
+    if (qrText) {
+      return [
+        {
+          format: 'QR_CODE',
+          value: qrText,
+          isUrl: isValidWebUrl(qrText),
+          timestamp: Date.now()
         }
+      ];
+    }
+  } catch {
+    // Continue to 1D barcodes
+  }
 
-        // Try EAN-13 from normalized bits
-        if (runs.length >= 59) {
-          const minRun = Math.min(...runs.filter((r) => r > 0));
-          let bits = '';
-          let isBar = true;
-          for (const r of runs) {
-            const count = Math.max(1, Math.round(r / minRun));
-            bits += (isBar ? '1' : '0').repeat(count);
-            isBar = !isBar;
-          }
+  // 3. Fallback: Software 1D scanline decoding (Code 39, EAN-13, UPC-A)
+  try {
+    const canvas = prepareCanvasForScanning(source);
+    if (canvas) {
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      if (ctx) {
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-          const ean = decodeEan13FromBits(bits);
-          if (ean) {
+        // Sample scanlines at 25%, 50%, 75% height
+        for (const yRatio of [0.5, 0.35, 0.65]) {
+          const runs = extractScanlineRuns(imgData, yRatio);
+
+          // Try Code 39
+          const code39 = decodeCode39FromRuns(runs);
+          if (code39) {
             results.push({
-              format: 'EAN_13',
-              value: ean,
-              isUrl: isValidWebUrl(ean),
+              format: 'CODE_39',
+              value: code39,
+              isUrl: isValidWebUrl(code39),
               timestamp: Date.now()
             });
             break;
+          }
+
+          // Try EAN-13 from normalized bits
+          if (runs.length >= 59) {
+            const minRun = Math.min(...runs.filter((r) => r > 0));
+            let bits = '';
+            let isBar = true;
+            for (const r of runs) {
+              const count = Math.max(1, Math.round(r / minRun));
+              bits += (isBar ? '1' : '0').repeat(count);
+              isBar = !isBar;
+            }
+
+            const ean = decodeEan13FromBits(bits);
+            if (ean) {
+              results.push({
+                format: 'EAN_13',
+                value: ean,
+                isUrl: isValidWebUrl(ean),
+                timestamp: Date.now()
+              });
+              break;
+            }
           }
         }
       }
     }
   } catch {
-    // Pure JS scanline attempt completed
+    // Scanline attempt finished
   }
 
   return results;

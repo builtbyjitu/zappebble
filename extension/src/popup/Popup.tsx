@@ -64,9 +64,21 @@ export const Popup: React.FC = () => {
     );
   }, [searchQuery]);
 
+  const getBaseWebUrl = (): string => {
+    if (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_SITE_URL) {
+      return (import.meta as any).env.VITE_SITE_URL.replace(/\/+$/, '');
+    }
+    if (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_SITE_URL) {
+      return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/+$/, '');
+    }
+    // Default to local development server http://localhost:3000
+    return 'http://localhost:3000';
+  };
+
   const openWebTool = (tool?: ToolDefinition) => {
-    const url = tool ? `https://webtools.local${tool.path}` : 'https://webtools.local';
-    if (typeof chrome !== 'undefined' && chrome.tabs) {
+    const base = getBaseWebUrl();
+    const url = tool ? `${base}${tool.path}` : base;
+    if (typeof chrome !== 'undefined' && chrome.tabs?.create) {
       chrome.tabs.create({ url });
     } else {
       window.open(url, '_blank');
