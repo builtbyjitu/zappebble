@@ -10,6 +10,8 @@ import { ImageCompressorTool } from '@/components/tools/ImageCompressorTool';
 import { ImageConverterTool } from '@/components/tools/ImageConverterTool';
 import { JsonFormatterTool } from '@/components/tools/JsonFormatterTool';
 import { WordCounterTool } from '@/components/tools/WordCounterTool';
+import { QrGeneratorTool } from '@/components/tools/QrGeneratorTool';
+import { ColorPickerTool } from '@/components/tools/ColorPickerTool';
 
 interface ToolPageProps {
   params: {
@@ -61,6 +63,10 @@ export default function ToolPage({ params }: ToolPageProps) {
         return <JsonFormatterTool />;
       case 'word-counter':
         return <WordCounterTool />;
+      case 'qr-generator':
+        return <QrGeneratorTool />;
+      case 'color-picker':
+        return <ColorPickerTool />;
       default:
         return (
           <div className="text-center py-12 px-4 max-w-xl mx-auto space-y-4">

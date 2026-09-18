@@ -32,6 +32,8 @@ import { ImageCompressorView } from '../tools/image-compressor/ImageCompressorVi
 import { ImageConverterView } from '../tools/image-converter/ImageConverterView';
 import { JsonFormatterView } from '../tools/json-formatter/JsonFormatterView';
 import { WordCounterView } from '../tools/word-counter/WordCounterView';
+import { QrGeneratorView } from '../tools/qr-generator/QrGeneratorView';
+import { ColorPickerView } from '../tools/color-picker/ColorPickerView';
 
 export const Popup: React.FC = () => {
   const [activeTool, setActiveTool] = useState<string | null>(null);
@@ -74,7 +76,9 @@ export const Popup: React.FC = () => {
       'image-compressor',
       'image-converter',
       'json-formatter',
-      'word-counter'
+      'word-counter',
+      'qr-generator',
+      'color-picker'
     ];
     if (supportedPopupTools.includes(tool.id)) {
       setActiveTool(tool.id);
@@ -122,6 +126,28 @@ export const Popup: React.FC = () => {
         <WordCounterView
           onBack={() => setActiveTool(null)}
           onOpenWeb={() => openWebTool(TOOLS.find((t) => t.id === 'word-counter'))}
+        />
+      </div>
+    );
+  }
+
+  if (activeTool === 'qr-generator') {
+    return (
+      <div className="w-[380px] min-h-[520px] max-h-[580px] bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans">
+        <QrGeneratorView
+          onBack={() => setActiveTool(null)}
+          onOpenWeb={() => openWebTool(TOOLS.find((t) => t.id === 'qr-generator'))}
+        />
+      </div>
+    );
+  }
+
+  if (activeTool === 'color-picker') {
+    return (
+      <div className="w-[380px] min-h-[520px] max-h-[580px] bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans">
+        <ColorPickerView
+          onBack={() => setActiveTool(null)}
+          onOpenWeb={() => openWebTool(TOOLS.find((t) => t.id === 'color-picker'))}
         />
       </div>
     );
