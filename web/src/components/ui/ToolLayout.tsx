@@ -11,10 +11,11 @@ import { cn } from '@/lib/utils';
 export interface ToolLayoutProps {
   tool: ToolDefinition;
   widthVariant?: 'narrow' | 'medium' | 'wide';
+  customContent?: React.ReactNode;
   children: React.ReactNode;
 }
 
-export function ToolLayout({ tool, widthVariant, children }: ToolLayoutProps) {
+export function ToolLayout({ tool, widthVariant, customContent, children }: ToolLayoutProps) {
   const relatedTools = tool.relatedToolSlugs
     .map((slug) => getToolBySlug(slug))
     .filter((t): t is ToolDefinition => Boolean(t));
@@ -89,58 +90,67 @@ export function ToolLayout({ tool, widthVariant, children }: ToolLayoutProps) {
         </section>
       )}
 
-      {/* 5. Benefits Section */}
-      <section aria-labelledby="why-use-heading" className="mb-12 sm:mb-16">
-        <div className="text-center max-w-2xl mx-auto mb-8">
-          <h2
-            id="why-use-heading"
-            className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white"
-          >
-            Why use ZapPebble {tool.name}?
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Built for speed, privacy, and frictionless everyday productivity
-          </p>
+      {/* 5. Tool-Specific Educational & Privacy Content */}
+      {customContent && (
+        <div className="mb-12 sm:mb-16">
+          {customContent}
         </div>
+      )}
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
-          <div className="p-5 sm:p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 shadow-2xs">
-            <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4">
-              <Zap size={20} />
-            </div>
-            <h3 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white mb-1.5">
-              Lightning Fast
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              Zero network latency. Everything is processed directly in your browser with optimized Web APIs.
+      {/* 6. Default Benefits Section (only rendered if no customContent is provided) */}
+      {!customContent && (
+        <section aria-labelledby="why-use-heading" className="mb-12 sm:mb-16">
+          <div className="text-center max-w-2xl mx-auto mb-8">
+            <h2
+              id="why-use-heading"
+              className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white"
+            >
+              Why use ZapPebble {tool.name}?
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+              Built for speed, privacy, and frictionless everyday productivity
             </p>
           </div>
 
-          <div className="p-5 sm:p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 shadow-2xs">
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4">
-              <Lock size={20} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+            <div className="p-5 sm:p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 shadow-2xs">
+              <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4">
+                <Zap size={20} />
+              </div>
+              <h3 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white mb-1.5">
+                Lightning Fast
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                Zero network latency. Everything is processed directly in your browser with optimized Web APIs.
+              </p>
             </div>
-            <h3 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white mb-1.5">
-              100% Private
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              Your files and sensitive information never leave your device. No cloud storage, no leaks.
-            </p>
-          </div>
 
-          <div className="p-5 sm:p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 shadow-2xs">
-            <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-4">
-              <Shield size={20} />
+            <div className="p-5 sm:p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 shadow-2xs">
+              <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4">
+                <Lock size={20} />
+              </div>
+              <h3 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white mb-1.5">
+                100% Private
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                Your files and sensitive information never leave your device. No cloud storage, no leaks.
+              </p>
             </div>
-            <h3 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white mb-1.5">
-              Free & No Limits
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              No mandatory signup, no credit cards, and no artificial daily limits. Use freely anytime.
-            </p>
+
+            <div className="p-5 sm:p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 shadow-2xs">
+              <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-4">
+                <Shield size={20} />
+              </div>
+              <h3 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white mb-1.5">
+                Free & No Limits
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                No mandatory signup, no credit cards, and no artificial daily limits. Use freely anytime.
+              </p>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* 6. FAQ Section */}
       {tool.faq && tool.faq.length > 0 && (

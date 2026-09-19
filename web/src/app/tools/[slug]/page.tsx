@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import { ImageCompressorTool } from '@/components/tools/ImageCompressorTool';
+import { ImageCompressorContent } from '@/components/tools/ImageCompressorContent';
 import { ImageConverterTool } from '@/components/tools/ImageConverterTool';
 import { JsonFormatterTool } from '@/components/tools/JsonFormatterTool';
 import { WordCounterTool } from '@/components/tools/WordCounterTool';
@@ -94,5 +95,12 @@ export default function ToolPage({ params }: ToolPageProps) {
     }
   };
 
-  return <ToolLayout tool={tool}>{renderToolComponent()}</ToolLayout>;
+  return (
+    <ToolLayout
+      tool={tool}
+      customContent={tool.slug === 'image-compressor' ? <ImageCompressorContent /> : undefined}
+    >
+      {renderToolComponent()}
+    </ToolLayout>
+  );
 }

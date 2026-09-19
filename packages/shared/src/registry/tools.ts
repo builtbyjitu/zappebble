@@ -5,8 +5,8 @@ export const TOOLS: ToolDefinition[] = [
     id: 'image-compressor',
     slug: 'image-compressor',
     name: 'Image Compressor',
-    tagline: 'Compress JPG, PNG, and WebP images directly in your browser without quality loss.',
-    description: 'Compress JPG, PNG and WebP images locally with customizable quality, instant preview, batch processing, and zero server uploads.',
+    tagline: 'Compress JPG, PNG, and WebP images directly in your browser without uploading your files.',
+    description: 'Compress JPG, PNG, and WebP images locally with customizable quality, optional resizing, instant preview, batch processing, and zero server uploads.',
     category: 'image',
     categoryLabel: 'Image Tools',
     iconName: 'Minimize2',
@@ -15,40 +15,60 @@ export const TOOLS: ToolDefinition[] = [
     extensionSupported: true,
     websiteSupported: true,
     seo: {
-      title: 'Free Image Compressor Online – JPG, PNG & WebP | ZapPebble',
-      description: 'Compress JPG, PNG and WebP images online for free with fast, private browser-based processing. Reduce file sizes without losing visual quality.',
+      title: 'Free Image Compressor Online – Compress JPG, PNG & WebP | ZapPebble',
+      description: 'Compress JPG, PNG, and WebP images locally in your browser. Adjust quality, resize dimensions, and reduce file sizes without uploading your files.',
       canonicalPath: '/tools/image-compressor',
-      keywords: ['image compressor', 'compress jpg', 'compress png', 'compress webp', 'free image optimizer', 'browser image compression']
+      keywords: [
+        'image compressor',
+        'compress jpg',
+        'compress png',
+        'compress webp',
+        'reduce image size',
+        'free image compressor online',
+        'browser image compression'
+      ]
     },
     howItWorks: [
       {
         step: 1,
-        title: 'Upload Images',
-        description: 'Drag and drop your JPG, PNG, or WebP files or choose them via file picker.'
+        title: 'Upload Your Images',
+        description: 'Drag and drop or browse JPG, PNG, or WebP files up to 50MB. Single images and batch files are supported.'
       },
       {
         step: 2,
-        title: 'Adjust Quality',
-        description: 'Set your preferred compression quality slider and preview live file size savings.'
+        title: 'Adjust Compression Settings',
+        description: 'Set your preferred quality level (1–100%). Optionally enable resizing to scale pixel dimensions, or select a different output format.'
       },
       {
         step: 3,
-        title: 'Download Locally',
-        description: 'Download individual optimized files or download all files at once instantly.'
+        title: 'Download Compressed Files',
+        description: 'Inspect before-and-after file size savings. Download images individually or save all compressed files together in a ZIP archive.'
       }
     ],
     faq: [
       {
-        question: 'Are my images uploaded to any server?',
-        answer: 'No. All compression happens 100% locally inside your browser using HTML5 Canvas and modern browser APIs. Your files never leave your device.'
+        question: 'How does browser-based image compression work?',
+        answer: 'ZapPebble uses your browser native HTML5 Canvas API and JavaScript engine to decode, resize, and re-encode images directly in your device memory. When you adjust the quality slider, the canvas toBlob function re-compresses the image data locally. Because all operations happen on your machine, your files are never uploaded to any remote server.'
       },
       {
-        question: 'Which formats are supported?',
-        answer: 'ZapPebble Image Compressor supports JPG/JPEG, PNG, and WebP formats.'
+        question: 'What quality setting should I use for my images?',
+        answer: 'A quality setting between 75% and 85% is a practical starting point for most web images, offering a strong balance between noticeable file size savings and visual clarity. For email attachments or web forms with strict file size limits, 65% to 75% works well. If you are preparing images for archival or high-resolution printing, keep the quality at 85% to 95%.'
       },
       {
-        question: 'Is there a file size limit?',
-        answer: 'Since processing is local, the limit depends on your device memory. Most standard images up to 50MB process smoothly.'
+        question: "Why didn't my PNG image get much smaller?",
+        answer: "PNG is inherently a lossless format. In standard browser Canvas implementations, adjusting the quality slider on a PNG output does not apply lossy compression. To significantly reduce a PNG file size, toggle the 'Optional Resize' feature to scale down its pixel dimensions, or change the 'Output Format' to WebP or JPG, both of which support lossy compression."
+      },
+      {
+        question: 'Does compressing a PNG remove its transparent background?',
+        answer: "No. As long as you keep the output format set to 'Keep original format', 'PNG', or 'WebP', transparent backgrounds are fully preserved. However, if you choose 'JPG' as the output format, transparent areas will automatically be filled with a solid white background because the JPEG standard does not support alpha transparency."
+      },
+      {
+        question: 'Can I compress multiple images simultaneously?',
+        answer: "Yes. You can drag and drop or select multiple JPG, PNG, and WebP files at once. Each image is processed locally in sequence to keep your browser responsive. Once complete, you can download images individually or click 'Download All as ZIP' to download them all in a single compressed archive."
+      },
+      {
+        question: 'Are my images uploaded or stored on any server?',
+        answer: 'Never. ZapPebble operates with a 100% client-side architecture. Your image files are loaded into your browser temporary memory, processed on your device, and downloaded directly from local memory blobs. No images, metadata, or personal data are ever transmitted across the internet.'
       }
     ],
     relatedToolSlugs: ['image-converter', 'screenshot-to-pdf', 'color-picker'],
