@@ -10,6 +10,9 @@ export const metadata: Metadata = {
     default: 'ZapPebble — Free Browser Tools. Fast. Private. Simple.',
     template: '%s | ZapPebble'
   },
+  alternates: {
+    canonical: '/'
+  },
   description:
     'Fast, free, and private browser tools for everyday work, study, and development. 100% client-side processing. Your files never leave your device.',
   keywords: [
