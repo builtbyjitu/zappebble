@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { ImageCompressorTool } from '@/components/tools/ImageCompressorTool';
 import { ImageCompressorContent } from '@/components/tools/ImageCompressorContent';
 import { ImageConverterTool } from '@/components/tools/ImageConverterTool';
+import { ImageConverterContent } from '@/components/tools/ImageConverterContent';
 import { JsonFormatterTool } from '@/components/tools/JsonFormatterTool';
 import { WordCounterTool } from '@/components/tools/WordCounterTool';
 import { QrGeneratorTool } from '@/components/tools/QrGeneratorTool';
@@ -95,10 +96,21 @@ export default function ToolPage({ params }: ToolPageProps) {
     }
   };
 
+  const resolvedCustomContent = () => {
+    switch (tool.slug) {
+      case 'image-compressor':
+        return <ImageCompressorContent />;
+      case 'image-converter':
+        return <ImageConverterContent />;
+      default:
+        return undefined;
+    }
+  };
+
   return (
     <ToolLayout
       tool={tool}
-      customContent={tool.slug === 'image-compressor' ? <ImageCompressorContent /> : undefined}
+      customContent={resolvedCustomContent()}
     >
       {renderToolComponent()}
     </ToolLayout>

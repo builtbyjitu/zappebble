@@ -78,7 +78,7 @@ export const TOOLS: ToolDefinition[] = [
     id: 'image-converter',
     slug: 'image-converter',
     name: 'Image Converter',
-    tagline: 'Convert images between JPG, PNG, and WebP formats in seconds with local processing.',
+    tagline: 'Convert JPG, PNG, and WebP images directly in your browser without uploading your files.',
     description: 'Convert single or multiple images between JPG, PNG, and WebP locally. Customize output quality, dimensions, and download instantly.',
     category: 'image',
     categoryLabel: 'Image Tools',
@@ -88,36 +88,60 @@ export const TOOLS: ToolDefinition[] = [
     extensionSupported: true,
     websiteSupported: true,
     seo: {
-      title: 'Free Image Converter Online – Convert JPG, PNG, WebP | ZapPebble',
-      description: 'Convert images between JPG, PNG, and WebP formats online for free. Fast local conversion with custom quality and resize settings.',
+      title: 'Image Converter Online – Convert JPG, PNG & WebP | ZapPebble',
+      description: 'Convert JPG, PNG, and WebP images directly in your browser. Change image formats, adjust quality, resize dimensions, and download locally with zero server uploads.',
       canonicalPath: '/tools/image-converter',
-      keywords: ['image converter', 'convert jpg to png', 'convert png to webp', 'convert webp to jpg', 'free image converter online']
+      keywords: [
+        'image converter',
+        'convert jpg to png',
+        'convert png to jpg',
+        'convert webp to png',
+        'convert jpg to webp',
+        'free image converter online',
+        'browser image converter'
+      ]
     },
     howItWorks: [
       {
         step: 1,
-        title: 'Select Input Files',
-        description: 'Drag and drop or select one or more image files from your computer.'
+        title: 'Select Input Images',
+        description: 'Drag and drop or select one or more JPG, PNG, or WebP files up to 50MB from your computer.'
       },
       {
         step: 2,
-        title: 'Choose Output Settings',
-        description: 'Select desired target format (JPG, PNG, WebP), quality level, and optional resize dimensions.'
+        title: 'Choose Output Format & Settings',
+        description: 'Select your target format (WebP, PNG, or JPG). Adjust quality for JPG/WebP, or optionally enable resizing to scale pixel dimensions.'
       },
       {
         step: 3,
-        title: 'Convert & Save',
-        description: 'Inspect converted previews and download files individually or as a batch bundle.'
+        title: 'Convert & Download Locally',
+        description: 'Inspect converted previews and download files individually or save all converted images together in a ZIP archive.'
       }
     ],
     faq: [
       {
-        question: 'Can I convert multiple images simultaneously?',
-        answer: 'Yes, batch conversion is fully supported. Select multiple files and convert them all to your chosen format.'
+        question: 'What image formats can I convert?',
+        answer: 'ZapPebble currently supports bi-directional conversion between JPG/JPEG, PNG, and WebP formats. You can upload any combination of these formats and convert them to your chosen target format.'
       },
       {
-        question: 'Does converting WebP to PNG preserve transparency?',
-        answer: 'Yes, converting transparent WebP images to PNG preserves full alpha transparency.'
+        question: 'Does converting an image reduce its file size?',
+        answer: 'Not necessarily. Format conversion changes the underlying file container and encoding standard. For example, converting a compressed JPG into a lossless PNG often increases the file size, while converting a PNG to WebP or JPG often reduces it. If your primary goal is shrinking file size, use our Image Compressor.'
+      },
+      {
+        question: 'Does JPG support transparent backgrounds?',
+        answer: 'No. The JPEG specification does not support an alpha transparency channel. If you convert a transparent PNG or WebP into a JPG, ZapPebble automatically fills the transparent areas with a clean white background to prevent dark or corrupted rendering artifacts.'
+      },
+      {
+        question: 'Will converting a JPG to PNG restore its original quality?',
+        answer: 'No. While PNG is a lossless format, converting a JPG to PNG only saves the current visual data without further loss. It cannot recreate fine details or undo compression artifacts that were already discarded when the original JPG was compressed.'
+      },
+      {
+        question: 'Why is my converted image file larger than the original?',
+        answer: 'This commonly occurs when converting lossy files (such as JPG) into PNG. PNG uses lossless compression designed for sharp edges and graphics, which requires more data to store continuous photographic gradients. Selecting WebP as your target format typically provides a much smaller file while maintaining high visual quality.'
+      },
+      {
+        question: 'Are my images uploaded to a server?',
+        answer: 'Never. All image decoding, canvas rendering, format re-encoding, and file packaging run 100% locally inside your browser memory. Your images never leave your computer and are never uploaded to any remote server or cloud service.'
       }
     ],
     relatedToolSlugs: ['image-compressor', 'color-picker', 'screenshot-to-pdf'],
