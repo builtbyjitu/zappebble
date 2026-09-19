@@ -13,6 +13,7 @@ import { ImageConverterContent } from '@/components/tools/ImageConverterContent'
 import { JsonFormatterTool } from '@/components/tools/JsonFormatterTool';
 import { WordCounterTool } from '@/components/tools/WordCounterTool';
 import { QrGeneratorTool } from '@/components/tools/QrGeneratorTool';
+import { QrGeneratorContent } from '@/components/tools/QrGeneratorContent';
 import { ColorPickerTool } from '@/components/tools/ColorPickerTool';
 import { ScreenshotPdfTool } from '@/components/tools/ScreenshotPdfTool';
 import { ScreenshotPdfContent } from '@/components/tools/ScreenshotPdfContent';
@@ -105,6 +106,8 @@ export default function ToolPage({ params }: ToolPageProps) {
         return <ImageConverterContent />;
       case 'screenshot-to-pdf':
         return <ScreenshotPdfContent />;
+      case 'qr-generator':
+        return <QrGeneratorContent />;
       default:
         return undefined;
     }

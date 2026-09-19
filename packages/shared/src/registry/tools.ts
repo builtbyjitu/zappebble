@@ -235,39 +235,73 @@ export const TOOLS: ToolDefinition[] = [
     extensionSupported: true,
     websiteSupported: true,
     seo: {
-      title: 'Free QR Code Generator Online – PNG & SVG Download | ZapPebble',
-      description: 'Create customized QR codes instantly for URLs, WiFi networks, emails, text, and phone numbers. Download high-resolution PNG or SVG vector files for free.',
+      title: 'Free QR Code Generator Online – Create PNG & SVG QR Codes | ZapPebble',
+      description: 'Create free static QR codes for website URLs, plain text, WiFi networks, email, and phone numbers directly in your browser. Customize colors, error correction, and download PNG or SVG.',
       canonicalPath: '/tools/qr-generator',
-      keywords: ['qr code generator', 'free qr generator', 'create qr code', 'wifi qr code', 'svg qr code generator']
+      keywords: [
+        'qr code generator',
+        'free qr generator',
+        'create qr code',
+        'generate qr code',
+        'wifi qr code',
+        'svg qr code generator',
+        'qr code png',
+        'custom qr code',
+        'private qr code generator'
+      ]
     },
     howItWorks: [
       {
         step: 1,
-        title: 'Choose Data Type',
-        description: 'Select your content type: Website URL, Plain Text, WiFi credentials, Email, or Phone number.'
+        title: 'Choose QR Content Type',
+        description: 'Select what your QR code will store: Website URL, Plain Text, WiFi credentials, Email message, or Phone number.'
       },
       {
         step: 2,
-        title: 'Enter Information',
-        description: 'Type in the required details and choose size and error correction levels.'
+        title: 'Enter Details & Customize',
+        description: 'Type in your content, choose error correction level (L, M, Q, H), select resolution, and customize foreground/background colors.'
       },
       {
         step: 3,
-        title: 'Download QR Code',
-        description: 'Copy the QR image or download crisp PNG or scalable vector SVG files immediately.'
+        title: 'Download PNG or SVG',
+        description: 'Download crisp raster PNG images, export infinite-resolution vector SVG files, or copy the encoded raw payload to your clipboard.'
       }
     ],
     faq: [
       {
-        question: 'Do the generated QR codes ever expire?',
-        answer: 'No. These are standard static QR codes encoding your raw data directly. They work forever without third-party redirection or expiration.'
+        question: 'What types of QR codes can I create with ZapPebble?',
+        answer: 'You can generate static QR codes for website URLs, plain text notes, email drafts (with optional pre-filled subject and body), telephone dialer numbers, and WiFi network credentials (supporting WPA/WPA2, WEP, open networks, and hidden SSIDs).'
       },
       {
-        question: 'Can I download vector SVG for printing?',
-        answer: 'Yes, SVG format is available for crisp printing at any resolution.'
+        question: 'Is this a static or dynamic QR code generator?',
+        answer: 'ZapPebble generates 100% static QR codes. The encoded data is embedded directly into the matrix pattern itself. There are no intermediate redirect servers, no scan limits, no user accounts, and no expiration dates. Once generated, your QR code will work permanently.'
+      },
+      {
+        question: 'What QR error correction level should I choose?',
+        answer: 'We recommend Level M (Medium, ~15% recovery) for most use cases, as it provides an optimal balance between scan resilience and module density. Level L (~7%) is best for clean digital screens with low density, while Level Q (~25%) and Level H (~30%) are recommended for printed materials subjected to outdoor weather, heavy handling, or physical wear.'
+      },
+      {
+        question: 'What resolution or size should my QR code be?',
+        answer: 'For digital sharing, website embeds, and email footers, 256×256 px or 512×512 px PNG is ideal. For physical printing, packaging, and posters, we recommend downloading the resolution-independent SVG vector format or the 1024×1024 px PNG preset.'
+      },
+      {
+        question: 'Can I create a WiFi QR code, and is it secure?',
+        answer: 'Yes. You can encode your wireless network name (SSID), password, and security type into a standard MeCard format that allows smartphones to connect with a single scan. However, keep in mind that the WiFi password is stored as plain text inside the QR code; treat printed WiFi QR codes like a written password.'
+      },
+      {
+        question: 'Should I download my QR code as PNG or SVG?',
+        answer: 'Download PNG for digital use on web pages, social media, slides, and office documents. Download SVG for professional commercial printing, merchandise, signage, and graphic design software (such as Adobe Illustrator or Figma), as vector SVG scales infinitely without pixelation.'
+      },
+      {
+        question: 'Why isn\'t my QR code scanning on mobile cameras?',
+        answer: 'The most common cause is insufficient color contrast between the foreground and background. Always ensure the foreground is significantly darker than the background (ZapPebble warns you if contrast is below 3.0:1). Other frequent causes include dense payloads with tiny modules, inverted colors, or cropping away the surrounding quiet zone margin.'
+      },
+      {
+        question: 'Is my QR data or WiFi password uploaded to any server?',
+        answer: 'Never. All QR matrix computation, color styling, and PNG/SVG export occur 100% locally inside your browser memory using client-side JavaScript. Your text, URLs, and network credentials never leave your device and are never transmitted to any external server.'
       }
     ],
-    relatedToolSlugs: ['qr-scanner', 'json-formatter'],
+    relatedToolSlugs: ['qr-scanner', 'color-picker'],
     privacyNote: 'QR codes are generated client-side; no data is ever sent to any remote API.'
   },
   {
