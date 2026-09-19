@@ -11,6 +11,7 @@ import { ImageCompressorContent } from '@/components/tools/ImageCompressorConten
 import { ImageConverterTool } from '@/components/tools/ImageConverterTool';
 import { ImageConverterContent } from '@/components/tools/ImageConverterContent';
 import { JsonFormatterTool } from '@/components/tools/JsonFormatterTool';
+import { JsonFormatterContent } from '@/components/tools/JsonFormatterContent';
 import { WordCounterTool } from '@/components/tools/WordCounterTool';
 import { QrGeneratorTool } from '@/components/tools/QrGeneratorTool';
 import { QrGeneratorContent } from '@/components/tools/QrGeneratorContent';
@@ -108,6 +109,8 @@ export default function ToolPage({ params }: ToolPageProps) {
         return <ScreenshotPdfContent />;
       case 'qr-generator':
         return <QrGeneratorContent />;
+      case 'json-formatter':
+        return <JsonFormatterContent />;
       default:
         return undefined;
     }

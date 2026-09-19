@@ -318,36 +318,70 @@ export const TOOLS: ToolDefinition[] = [
     extensionSupported: true,
     websiteSupported: true,
     seo: {
-      title: 'Free JSON Formatter & Validator Online | ZapPebble',
-      description: 'Format, validate, prettify, and minify JSON data online for free. Clear syntax highlighting and exact error line/column tracking.',
+      title: 'Free JSON Formatter & Validator Online – Pretty Print & Minify | ZapPebble',
+      description: 'Format, validate, minify, and inspect JSON in your browser. Real-time syntax error checking with exact line and column locations, interactive tree view, and 100% private in-browser processing.',
       canonicalPath: '/tools/json-formatter',
-      keywords: ['json formatter', 'json validator', 'format json online', 'json pretty print', 'minify json', 'json parser']
+      keywords: [
+        'json formatter',
+        'json validator',
+        'format json online',
+        'json pretty print',
+        'minify json',
+        'json parser online',
+        'json syntax checker',
+        'json tree viewer',
+        'private json formatter'
+      ]
     },
     howItWorks: [
       {
         step: 1,
-        title: 'Paste or Upload JSON',
-        description: 'Paste your raw JSON string or upload a .json file directly into the editor.'
+        title: 'Paste or Enter JSON',
+        description: 'Paste your raw JSON string directly into the code editor. Real-time line numbering and syntax validation activate immediately.'
       },
       {
         step: 2,
-        title: 'Format or Minify',
-        description: 'Click Format (2 or 4 spaces) or Minify. Validation runs live and reports exact error positions.'
+        title: 'Format, Minify, or Debug',
+        description: 'Click Format JSON (2 spaces, 4 spaces, or tabs) to pretty-print, or Minify JSON to strip whitespace. If errors exist, inspect the exact line and column indicator.'
       },
       {
         step: 3,
         title: 'Copy or Download',
-        description: 'Copy formatted output to clipboard with one click or download as a .json file.'
+        description: 'Copy the formatted output to your clipboard with one click, or download the clean JSON file directly to your device.'
       }
     ],
     faq: [
       {
-        question: 'Is it safe to format sensitive JSON data here?',
-        answer: 'Yes. Processing runs completely in your local browser window. ZapPebble does not transmit your JSON payload to any server.'
+        question: 'What does a JSON formatter do?',
+        answer: 'A JSON formatter (also called a pretty-printer or beautifier) takes compacted or unformatted JSON text and adds standard indentation, line breaks, and whitespace. This makes the data structure easy for humans to read, review, and debug without altering the underlying data values.'
       },
       {
-        question: 'Does it pinpoint syntax errors?',
-        answer: 'Yes, the parser catches syntax anomalies and provides clear line and column guidance to quickly fix broken JSON.'
+        question: 'What is the difference between formatting and minifying JSON?',
+        answer: 'Formatting adds indentation and line breaks to maximize human readability during development. Minifying removes all non-essential whitespace and newlines to produce the smallest possible plain-text payload, reducing bandwidth and storage consumption when transmitting data over networks.'
+      },
+      {
+        question: 'Why does my JSON show an "Unexpected token" error?',
+        answer: 'An "Unexpected token" error occurs when the parser encounters a character that violates RFC 8259 syntax rules. Frequent causes include trailing commas after the last item in an array or object, using single quotes instead of double quotes, missing colons between keys and values, or unquoted property names.'
+      },
+      {
+        question: 'How do line and column numbers help fix invalid JSON?',
+        answer: 'ZapPebble extracts the exact character offset from parser exceptions and maps it to line and column coordinates, displaying a snippet of the broken line. Because parsers report where they detected the failure, check the reported column as well as the characters or lines immediately preceding it.'
+      },
+      {
+        question: 'Does this tool validate JSON Schema?',
+        answer: 'No. ZapPebble validates JSON syntax against the official RFC 8259 specification (checking for valid brackets, quotes, and punctuation). It does not evaluate external JSON Schema contracts (such as verifying data types, required fields, or regex formats).'
+      },
+      {
+        question: 'Can I search inside large JSON documents?',
+        answer: 'Yes. Use the integrated search bar above the editor to search for any key, string value, or number. ZapPebble highlights matching text in the editor and provides up/down navigation buttons to jump between matches.'
+      },
+      {
+        question: 'How does the JSON Tree View work?',
+        answer: 'The Tree View parses valid JSON into an interactive, collapsible visual hierarchy. Objects and arrays can be expanded or collapsed node-by-node, and values are tagged with color-coded type badges (string, number, boolean, null) for rapid inspection.'
+      },
+      {
+        question: 'Is my JSON data uploaded to any external server?',
+        answer: 'Never. All JSON parsing, syntax validation, formatting, minification, and tree generation run 100% locally inside your browser memory using client-side JavaScript. Your data, API payloads, and tokens never leave your computer.'
       }
     ],
     relatedToolSlugs: ['word-counter', 'qr-generator'],
