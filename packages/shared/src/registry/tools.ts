@@ -161,48 +161,61 @@ export const TOOLS: ToolDefinition[] = [
     extensionSupported: true,
     websiteSupported: true,
     seo: {
-      title: 'Free Screenshot to PDF Converter Online | ZapPebble',
-      description: 'Convert screenshots and images to PDF documents online for free. Customize A4 or Letter sizes, portrait or landscape orientation, with 100% private processing.',
+      title: 'Free Screenshot to PDF Converter Online – Fast & Private | ZapPebble',
+      description: 'Convert screenshots, PNG, JPG, and WebP images to PDF online for free. Choose ISO A4, US Letter, or original image size with portrait/landscape orientation and 100% private in-browser processing.',
       canonicalPath: '/tools/screenshot-to-pdf',
-      keywords: ['screenshot to pdf', 'image to pdf', 'convert screenshot to pdf', 'webpage capture to pdf', 'pdf maker']
+      keywords: [
+        'screenshot to pdf',
+        'convert screenshot to pdf',
+        'image to pdf',
+        'png to pdf',
+        'jpg to pdf',
+        'save screenshot as pdf',
+        'screenshot to pdf converter online',
+        'free pdf maker'
+      ]
     },
     howItWorks: [
       {
         step: 1,
-        title: 'Capture or Upload',
-        description: 'Use the extension capture button or upload an existing screenshot from your device.'
+        title: 'Upload or Drop Screenshot',
+        description: 'Upload any PNG, JPG, or WebP screenshot or image directly from your computer.'
       },
       {
         step: 2,
-        title: 'Configure Page Layout',
-        description: 'Select page format (A4 or Letter), orientation (Portrait or Landscape), and image margin.'
+        title: 'Configure Page Layout & Margins',
+        description: 'Select ISO A4, US Letter, or Original Image Size with customized orientation, fit mode, and margin spacing.'
       },
       {
         step: 3,
-        title: 'Generate PDF',
-        description: 'Generate and download the compiled PDF document instantly without server processing.'
+        title: 'Generate & Download PDF',
+        description: 'Generate and download your high-resolution PDF document instantly with 100% client-side privacy.'
       }
     ],
     faq: [
       {
-        question: 'How do I convert a screenshot to PDF?',
-        answer: 'Simply upload any PNG, JPG, or WebP screenshot file, choose your page layout preferences (size, orientation, fit, margin), and click "Generate & Download PDF".'
+        question: 'How do I convert a screenshot to a PDF document?',
+        answer: 'Simply drag and drop or upload any PNG, JPG, or WebP screenshot file, customize your preferred page size (A4, US Letter, or Original Image Size), orientation, fit mode, and margins, then click "Generate & Download PDF". The document compiles instantly in your browser.'
       },
       {
-        question: 'Can I convert PNG, JPG, or WebP to PDF?',
-        answer: 'Yes. ZapPebble accepts all standard raster image formats including PNG, JPG, JPEG, and WebP, converting them directly to standard PDF documents.'
+        question: 'What page size should I choose: A4, US Letter, or Original Image Size?',
+        answer: 'Choose ISO A4 if you are located in or sending documents to Europe, Asia, Latin America, or international organizations. Choose US Letter for the United States, Canada, and Mexico. Choose Original Image Size if your PDF is intended for digital viewing, developer bug tracking, or UI archives, as it matches your screenshot\'s exact pixel dimensions with zero white borders.'
       },
       {
-        question: 'Are my images uploaded to a server?',
-        answer: 'Never. All PDF document assembly and image decoding happens 100% locally in your browser memory. Your files never leave your device.'
+        question: 'What is the difference between Fit to Page, Fill Page, and Original 1:1?',
+        answer: 'Fit to Page scales the image proportionally to fit completely inside the printable area without cropping or distorting aspect ratio. Fill Page forces the image to fill the entire printable area edge-to-edge, which may stretch proportions if the aspect ratios differ. Original 1:1 renders each image pixel as one PDF point centered on the page without scaling.'
       },
       {
-        question: 'Can I choose A4, Letter, or Original Image Size?',
-        answer: 'Yes. You can select standard ISO A4, US Letter, or Original Image Size, with Portrait, Landscape, or Auto-fit orientation.'
+        question: 'Why does my screenshot PDF have white bars or margins around the image?',
+        answer: 'White bars (letterboxing) appear when using Fit to Page if your screenshot\'s aspect ratio (e.g. 16:9 widescreen) does not match the paper\'s aspect ratio (such as A4 or Letter). To eliminate white bars, select Landscape orientation to better match wide screens, or select Original Image Size with None (0 pt) margins.'
       },
       {
-        question: 'Can I use this tool without installing software?',
-        answer: 'Yes! ZapPebble runs instantly in any modern web browser or as a lightweight Chrome extension with zero installation or plugins required.'
+        question: 'Does converting a screenshot to PDF reduce image quality or resolution?',
+        answer: 'No. ZapPebble embeds your screenshot as a high-quality JPEG stream (0.95 quality rating) directly into the PDF-1.4 binary structure. Small text, user interface icons, and code snippets remain sharp, crisp, and fully legible.'
+      },
+      {
+        question: 'Are my screenshots uploaded to a remote server or cloud service?',
+        answer: 'Never. All image decoding, canvas rendering, and PDF-1.4 binary document synthesis happen 100% locally inside your browser memory using client-side JavaScript. Your files and captures are never transmitted over the internet or stored on any server.'
       }
     ],
     relatedToolSlugs: ['image-compressor', 'image-converter'],

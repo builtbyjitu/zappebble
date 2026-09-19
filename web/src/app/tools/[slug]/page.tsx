@@ -15,6 +15,7 @@ import { WordCounterTool } from '@/components/tools/WordCounterTool';
 import { QrGeneratorTool } from '@/components/tools/QrGeneratorTool';
 import { ColorPickerTool } from '@/components/tools/ColorPickerTool';
 import { ScreenshotPdfTool } from '@/components/tools/ScreenshotPdfTool';
+import { ScreenshotPdfContent } from '@/components/tools/ScreenshotPdfContent';
 import { QrScannerTool } from '@/components/tools/QrScannerTool';
 
 interface ToolPageProps {
@@ -102,6 +103,8 @@ export default function ToolPage({ params }: ToolPageProps) {
         return <ImageCompressorContent />;
       case 'image-converter':
         return <ImageConverterContent />;
+      case 'screenshot-to-pdf':
+        return <ScreenshotPdfContent />;
       default:
         return undefined;
     }
