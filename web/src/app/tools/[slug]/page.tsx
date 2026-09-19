@@ -17,6 +17,7 @@ import { WordCounterContent } from '@/components/tools/WordCounterContent';
 import { QrGeneratorTool } from '@/components/tools/QrGeneratorTool';
 import { QrGeneratorContent } from '@/components/tools/QrGeneratorContent';
 import { ColorPickerTool } from '@/components/tools/ColorPickerTool';
+import { ColorPickerContent } from '@/components/tools/ColorPickerContent';
 import { ScreenshotPdfTool } from '@/components/tools/ScreenshotPdfTool';
 import { ScreenshotPdfContent } from '@/components/tools/ScreenshotPdfContent';
 import { QrScannerTool } from '@/components/tools/QrScannerTool';
@@ -114,6 +115,8 @@ export default function ToolPage({ params }: ToolPageProps) {
         return <JsonFormatterContent />;
       case 'word-counter':
         return <WordCounterContent />;
+      case 'color-picker':
+        return <ColorPickerContent />;
       default:
         return undefined;
     }

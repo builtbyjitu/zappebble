@@ -485,40 +485,75 @@ export const TOOLS: ToolDefinition[] = [
     extensionSupported: true,
     websiteSupported: true,
     seo: {
-      title: 'Free Color Picker & HEX, RGB, HSL Converter | ZapPebble',
-      description: 'Pick colors easily with eyedropper support, generate color codes in HEX, RGB, HSL, and manage color palettes online for free.',
+      title: 'Free Color Picker Online – HEX, RGB, HSL & WCAG Contrast Checker | ZapPebble',
+      description: 'Pick colors, inspect live HEX, RGB, and HSL values, sample screen pixels with the EyeDropper, and test WCAG 2.1 AA/AAA contrast ratios with 100% private in-browser processing.',
       canonicalPath: '/tools/color-picker',
-      keywords: ['color picker', 'eyedropper tool', 'hex to rgb', 'rgb to hsl', 'color converter', 'online color palette']
+      keywords: [
+        'color picker',
+        'color picker online',
+        'hex color picker',
+        'rgb color picker',
+        'hsl color picker',
+        'color contrast checker',
+        'wcag contrast checker',
+        'eyedropper color picker',
+        'pick color from screen',
+        'hex to rgb'
+      ]
     },
     howItWorks: [
       {
         step: 1,
-        title: 'Pick a Color',
-        description: 'Use the screen EyeDropper button or select any color from the interactive color spectrum.'
+        title: 'Choose or Sample a Color',
+        description: 'Click the color swatch, type or paste a HEX code, adjust RGB sliders, or use the screen EyeDropper to sample any visible pixel.'
       },
       {
         step: 2,
-        title: 'View Formats',
-        description: 'See live values in HEX, RGB, and HSL formats with contrast suggestions.'
+        title: 'Inspect Formats & Check Contrast',
+        description: 'Review synchronized HEX, RGB, and HSL values while verifying real-time WCAG 2.1 AA and AAA contrast ratings against white and black.'
       },
       {
         step: 3,
-        title: 'Copy & Save History',
-        description: 'Click any format to copy to clipboard and preserve recent picks in your local session history.'
+        title: 'Copy Codes & Save History',
+        description: 'Click any code card to copy formatted CSS values to your clipboard. Your last 16 unique color selections are automatically saved in local browser storage.'
       }
     ],
     faq: [
       {
-        question: 'Does the EyeDropper work across tabs?',
-        answer: 'On supported Chromium browsers, the EyeDropper API allows sampling any pixel visible on your screen.'
+        question: 'What is a color picker and why are multiple color formats needed?',
+        answer: 'A color picker allows designers and developers to select, inspect, and adjust visual colors and retrieve precise numerical representations. Different environments require different formats: HEX is standard in HTML and CSS stylesheets, RGB aligns with screen subpixel rendering and digital graphics applications, and HSL provides an intuitive model for adjusting shade, tint, and saturation programmatically.'
       },
       {
-        question: 'Can I copy values in different formats?',
-        answer: 'Yes, copy buttons are available for HEX (#RRGGBB), RGB (rgb(r,g,b)), and HSL (hsl(h,s%,l%)).'
+        question: 'What is the difference between HEX, RGB, and HSL color models?',
+        answer: 'HEX (#RRGGBB) represents red, green, and blue intensities using base-16 hexadecimal notation (00 to FF). RGB (rgb(r, g, b)) uses base-10 integers from 0 to 255 for the same color channels. HSL (hsl(h, s%, l%)) describes color in cylindrical coordinates: Hue in degrees (0° to 360°), Saturation as a percentage (0% grayscale to 100% full color), and Lightness as a percentage (0% black, 50% normal color, 100% white).'
+      },
+      {
+        question: 'How does the EyeDropper tool pick colors from the screen?',
+        answer: 'ZapPebble uses the native browser EyeDropper API (window.EyeDropper). When clicked, the browser provides an OS-level magnifying loupe that allows you to sample any visible pixel on your screen (inside or outside the browser window). The API returns the sampled pixel as an sRGB hexadecimal string directly into memory.'
+      },
+      {
+        question: 'Why is the EyeDropper button disabled or unsupported on some browsers?',
+        answer: 'The EyeDropper API is currently supported on Chromium-based desktop browsers (Google Chrome, Microsoft Edge, Brave, Opera, and Vivaldi). Safari and Firefox do not currently support the EyeDropper API. On unsupported browsers, the button is disabled with an explanatory note, but the interactive color swatch, HEX input, and RGB sliders remain fully accessible.'
+      },
+      {
+        question: 'What does the contrast ratio number mean?',
+        answer: 'The contrast ratio measures the relative luminance difference between two colors on a scale from 1:1 (identical colors with zero contrast) to 21:1 (pure black on pure white). Higher contrast numbers indicate greater legibility, making text readable for individuals with moderate to severe low vision or color vision deficiencies.'
+      },
+      {
+        question: 'What is the difference between WCAG AA and AAA accessibility levels?',
+        answer: 'Under WCAG 2.1, Level AA requires a contrast ratio of at least 4.5:1 for standard body text (under 18pt or 14pt bold) and 3.0:1 for large text (18pt+ regular or 14pt+ bold). Level AAA is a higher enhancement standard requiring 7.0:1 for standard text and 4.5:1 for large text. Level AA is the benchmark legally mandated by accessibility regulations such as Section 508 and the European Accessibility Act.'
+      },
+      {
+        question: 'How does ZapPebble store my recent color history?',
+        answer: 'ZapPebble stores your last 16 unique color selections directly in your browser localStorage under the key zappebble_color_history. Your history persists between page reloads and browser restarts. You can click any saved swatch to reactivate it or clear the list anytime with one click.'
+      },
+      {
+        question: 'Are my colors or screen captures uploaded to any server?',
+        answer: 'Never. All color conversions, mathematical contrast calculations, and EyeDropper sampling run 100% locally inside your browser client memory. No pixels, screenshots, or color values are transmitted across the network, logged on servers, or stored externally.'
       }
     ],
-    relatedToolSlugs: ['image-compressor', 'image-converter'],
-    privacyNote: 'Color choices remain in local browser storage and are never uploaded.'
+    relatedToolSlugs: ['qr-generator', 'image-converter'],
+    privacyNote: 'Color choices and screen sampling remain 100% in your local browser session. Nothing is ever uploaded.'
   },
   {
     id: 'qr-scanner',
