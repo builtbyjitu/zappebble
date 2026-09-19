@@ -569,52 +569,77 @@ export const TOOLS: ToolDefinition[] = [
     extensionSupported: true,
     websiteSupported: true,
     seo: {
-      title: 'Free QR & Barcode Scanner Online – Safe Client-Side Scan | ZapPebble',
-      description: 'Scan QR codes and barcodes online securely via webcam or image upload. Preview URLs safely before visiting with no server uploads.',
+      title: 'Free QR & Barcode Scanner Online – Scan from Camera or Image | ZapPebble',
+      description: 'Scan QR codes and barcodes from images or your camera in your browser. Decode locally with zero server uploads, then copy values or safely open verified web links.',
       canonicalPath: '/tools/qr-scanner',
-      keywords: ['qr scanner', 'barcode scanner', 'scan qr code online', 'scan barcode from image', 'safe qr code reader']
+      keywords: [
+        'qr scanner',
+        'qr code scanner',
+        'qr scanner online',
+        'barcode scanner',
+        'barcode scanner online',
+        'qr code reader',
+        'scan qr code online',
+        'scan qr code from image',
+        'scan qr code with camera',
+        'ean-13 scanner',
+        'upc-a scanner',
+        'code 128 scanner'
+      ]
     },
     howItWorks: [
       {
         step: 1,
-        title: 'Upload or Open Camera',
-        description: 'Upload an image containing a code or grant camera access to scan in real-time.'
+        title: 'Choose Upload or Camera Mode',
+        description: 'Select Upload Image to scan screenshots, photos, or graphics, or select Scan with Camera to scan physical codes with your webcam.'
       },
       {
         step: 2,
-        title: 'Safe Decode Preview',
-        description: 'The decoded value is displayed safely as plain text to prevent malicious auto-navigation.'
+        title: 'Provide Image or Start Camera',
+        description: 'Drop or select your image file, or click Start Camera and align the QR code or barcode within the on-screen viewfinder reticle.'
       },
       {
         step: 3,
-        title: 'Copy or Open',
-        description: 'Copy the result to clipboard or manually choose to visit detected web URLs.'
+        title: 'Inspect Decoded Value & Open or Copy',
+        description: 'Review the detected format and plain text result. Copy the value to your clipboard with one click, or safely open verified HTTP/HTTPS web links.'
       }
     ],
     faq: [
       {
-        question: 'Can I scan a QR code from an image?',
-        answer: 'Yes! You can drag and drop or browse any screenshot or photo containing a QR code or barcode to decode it immediately.'
+        question: 'Can I scan a QR code from an image or screenshot?',
+        answer: 'Yes. Switch to the Upload Image tab and drag and drop or browse any PNG, JPG, WebP, or non-animated GIF image containing a QR code or supported barcode. ZapPebble renders the graphic onto an off-screen canvas and runs multi-pass decoding immediately in your browser.'
       },
       {
-        question: 'Which barcodes are supported?',
-        answer: 'ZapPebble supports standard 2D and 1D barcode standards including QR Code, EAN-13, EAN-8, UPC-A, UPC-E, Code 128, Code 39, and ITF.'
+        question: 'Can I scan a QR code or barcode with my camera or webcam?',
+        answer: 'Yes. Switch to the Scan with Camera tab and click Start Camera. Once you grant browser camera access, hold the code in front of your lens inside the blue viewfinder box. As soon as the code is recognized, the camera automatically stops and releases hardware resources.'
       },
       {
-        question: 'Does the scanner upload my image or camera data?',
-        answer: 'No. All frame analysis and decoding is performed 100% locally in your browser memory. Nothing is ever sent to a remote server.'
+        question: 'Which QR and barcode formats does ZapPebble support?',
+        answer: 'ZapPebble decodes 2D QR Codes as well as 1D linear barcodes including EAN-13, EAN-8, UPC-A, UPC-E, Code 128, Code 39, and ITF (Interleaved 2 of 5). On browsers supporting the native BarcodeDetector API, additional formats like Data Matrix or Aztec may also be detected.'
       },
       {
-        question: 'Can I scan using my camera or webcam?',
-        answer: 'Yes. On devices with a camera, you can start live camera scanning with a single click. When stopped, camera hardware is immediately released.'
+        question: 'Does the scanner upload my photos or camera frames to a server?',
+        answer: 'Never. All image rendering, pixel analysis, and barcode decoding execute 100% locally inside your browser process memory using client-side JavaScript and browser APIs. No photos, camera video streams, or decoded data are ever transmitted to any remote server.'
       },
       {
-        question: 'Does the scanner automatically redirect to scanned URLs?',
-        answer: 'Never. Scanned content is displayed safely as plain text first. Only if the result is a valid web link will an "Open Link" button appear for explicit navigation.'
+        question: 'Why does the scanner ask before opening a web link?',
+        answer: 'For your security, ZapPebble displays decoded results as plain text first rather than automatically redirecting your browser. This allows you to inspect the full URL, domain, and protocol before clicking Open Link, protecting you from malicious QR codes ("QRishing") and unexpected redirects.'
+      },
+      {
+        question: 'Why isn\'t my QR code or barcode scanning?',
+        answer: 'Common causes include camera blurriness (holding the device too close), surface glare or reflections on glossy packaging/screens, low contrast between dark bars and light background, cropped borders (missing quiet zones), or tilted/curved 1D barcodes on cylindrical cans. Ensure adequate lighting and hold the code steady.'
+      },
+      {
+        question: 'What happens if a QR code contains plain text or numbers instead of a link?',
+        answer: 'When a QR code contains plain text, serial numbers, WiFi credentials (WIFI:S:...), or contact cards (vCard), ZapPebble displays the complete decoded text in a scrollable monospace container. You can copy the entire payload to your clipboard with a single click.'
+      },
+      {
+        question: 'Does the camera start automatically when I visit the page?',
+        answer: 'No. The camera is completely inactive until you explicitly click the Start Camera button. Your browser will prompt you to grant camera access, and you can stop the camera at any time by clicking Stop Camera or switching tabs.'
       }
     ],
-    relatedToolSlugs: ['qr-generator', 'json-formatter'],
-    privacyNote: 'Camera feed and images are processed frame-by-frame locally. No video or pictures are stored.'
+    relatedToolSlugs: ['qr-generator', 'color-picker'],
+    privacyNote: 'All image and camera frame decoding runs 100% locally in your browser memory. Nothing is ever uploaded or recorded.'
   }
 ];
 

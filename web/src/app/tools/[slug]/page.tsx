@@ -21,6 +21,7 @@ import { ColorPickerContent } from '@/components/tools/ColorPickerContent';
 import { ScreenshotPdfTool } from '@/components/tools/ScreenshotPdfTool';
 import { ScreenshotPdfContent } from '@/components/tools/ScreenshotPdfContent';
 import { QrScannerTool } from '@/components/tools/QrScannerTool';
+import { QrScannerContent } from '@/components/tools/QrScannerContent';
 
 interface ToolPageProps {
   params: {
@@ -117,6 +118,8 @@ export default function ToolPage({ params }: ToolPageProps) {
         return <WordCounterContent />;
       case 'color-picker':
         return <ColorPickerContent />;
+      case 'qr-scanner':
+        return <QrScannerContent />;
       default:
         return undefined;
     }
