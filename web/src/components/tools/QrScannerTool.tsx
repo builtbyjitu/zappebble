@@ -21,13 +21,15 @@ import {
   ExternalLink,
   Check,
   RotateCcw,
-  Sparkles,
   ShieldCheck,
   AlertTriangle,
   Upload,
-  Info,
-  CheckCircle2
+  CheckCircle2,
+  RefreshCw,
+  Cpu
 } from 'lucide-react';
+
+type CameraStatus = 'idle' | 'requesting' | 'active' | 'denied' | 'unavailable' | 'error';
 
 export function QrScannerTool() {
   const [activeTab, setActiveTab] = useState<'upload' | 'camera'>('upload');
@@ -38,7 +40,7 @@ export function QrScannerTool() {
   const [isAnalyzingImage, setIsAnalyzingImage] = useState<boolean>(false);
 
   // Camera State
-  const [isCameraActive, setIsCameraActive] = useState<boolean>(false);
+  const [cameraStatus, setCameraStatus] = useState<CameraStatus>('idle');
   const [cameraError, setCameraError] = useState<string | null>(null);
 
   // Scan Results
@@ -46,6 +48,10 @@ export function QrScannerTool() {
   const [noResultFound, setNoResultFound] = useState<boolean>(false);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [generalError, setGeneralError] = useState<string | null>(null);
+  const [liveStatus, setLiveStatus] = useState<string>('');
+
+  // Hardware acceleration detection
+  const [hasHardwareAcceleration, setHasHardwareAcceleration] = useState<boolean>(false);
 
   // DOM Refs
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -53,6 +59,10 @@ export function QrScannerTool() {
   const animationFrameRef = useRef<number | null>(null);
   const lastScanTimeRef = useRef<number>(0);
   const imageElementRef = useRef<HTMLImageElement | null>(null);
+
+  useEffect(() => {
+    setHasHardwareAcceleration(isBarcodeDetectorSupported());
+  }, []);
 
   const stopCamera = useCallback(() => {
     if (animationFrameRef.current) {
@@ -66,7 +76,7 @@ export function QrScannerTool() {
     if (videoRef.current) {
       videoRef.current.srcObject = null;
     }
-    setIsCameraActive(false);
+    setCameraStatus('idle');
   }, []);
 
   // Clean up object URLs and camera on unmount
@@ -95,6 +105,7 @@ export function QrScannerTool() {
     setUploadedFile(file);
     setImagePreviewUrl(previewUrl);
     setIsAnalyzingImage(true);
+    setLiveStatus('Analyzing image for barcodes and QR codes...');
 
     const img = new Image();
     img.crossOrigin = 'anonymous';
@@ -105,13 +116,18 @@ export function QrScannerTool() {
         if (detected.length > 0) {
           setResults(detected);
           setNoResultFound(false);
+          setLiveStatus(
+            `Scan complete. Found ${detected.length} code${detected.length > 1 ? 's' : ''}: ${detected[0].format}`
+          );
         } else {
           setResults([]);
           setNoResultFound(true);
+          setLiveStatus('Scan complete. No recognizable QR code or barcode found in this image.');
         }
       } catch (err) {
         console.error('Scan error:', err);
-        setGeneralError('Failed to analyze image for codes.');
+        setGeneralError('Failed to analyze image for codes. Please try a different image.');
+        setLiveStatus('Failed to analyze image.');
       } finally {
         setIsAnalyzingImage(false);
       }
@@ -119,7 +135,8 @@ export function QrScannerTool() {
 
     img.onerror = () => {
       setIsAnalyzingImage(false);
-      setGeneralError('Unable to load image for scanning. Please check the file.');
+      setGeneralError('Unable to load image for scanning. Please verify the file format.');
+      setLiveStatus('Unable to load image.');
     };
 
     img.src = previewUrl;
@@ -130,9 +147,13 @@ export function QrScannerTool() {
     setCameraError(null);
     setResults([]);
     setNoResultFound(false);
+    setCameraStatus('requesting');
+    setLiveStatus('Requesting camera access...');
 
     if (typeof navigator === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
+      setCameraStatus('unavailable');
       setCameraError('Camera access is not supported in this browser environment.');
+      setLiveStatus('Camera access is not supported.');
       return;
     }
 
@@ -151,23 +172,31 @@ export function QrScannerTool() {
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
       }
-      setIsCameraActive(true);
+      setCameraStatus('active');
+      setLiveStatus('Camera active. Align code inside the viewfinder.');
     } catch (err: any) {
       console.error('Camera access failed:', err);
       if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-        setCameraError('Camera permission was denied. Please allow camera access in browser settings to scan live codes.');
+        setCameraStatus('denied');
+        setCameraError(
+          'Camera permission was denied. Please allow camera access in browser settings to scan live codes.'
+        );
+        setLiveStatus('Camera permission denied.');
       } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-        setCameraError('No camera found on this device.');
+        setCameraStatus('unavailable');
+        setCameraError('No camera was detected on this device.');
+        setLiveStatus('No camera found on this device.');
       } else {
+        setCameraStatus('error');
         setCameraError('Unable to connect to camera. Please try image upload mode.');
+        setLiveStatus('Unable to connect to camera.');
       }
-      setIsCameraActive(false);
     }
   };
 
   // Frame processing loop for camera
   useEffect(() => {
-    if (!isCameraActive) return;
+    if (cameraStatus !== 'active') return;
 
     let isScanning = true;
 
@@ -175,18 +204,25 @@ export function QrScannerTool() {
       if (!isScanning) return;
 
       const now = Date.now();
-      // Throttle scanning to every 180ms to keep CPU usage low
-      if (now - lastScanTimeRef.current > 180 && videoRef.current && videoRef.current.readyState >= 2) {
+      // Throttle scanning to every 180ms to keep CPU/battery usage low
+      if (
+        now - lastScanTimeRef.current > 180 &&
+        videoRef.current &&
+        videoRef.current.readyState >= 2
+      ) {
         lastScanTimeRef.current = now;
         try {
           const detected = await scanImageSource(videoRef.current, { returnMultiple: false });
           if (detected.length > 0) {
             setResults(detected);
-            stopCamera(); // Pause on first reliable find
+            stopCamera();
+            setLiveStatus(
+              `Scan complete. Found ${detected[0].format.replace(/_/g, ' ')}: ${detected[0].value}`
+            );
             return;
           }
         } catch {
-          // Ignore frame decode errors
+          // Ignore frame decode errors during active stream
         }
       }
 
@@ -203,12 +239,13 @@ export function QrScannerTool() {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [isCameraActive, stopCamera]);
+  }, [cameraStatus, stopCamera]);
 
   const handleCopy = async (value: string, index: number) => {
     const ok = await copyToClipboard(value);
     if (ok) {
       setCopiedIndex(index);
+      setLiveStatus('Value copied to clipboard.');
       setTimeout(() => setCopiedIndex(null), 2000);
     }
   };
@@ -224,106 +261,167 @@ export function QrScannerTool() {
     setGeneralError(null);
     setCameraError(null);
     stopCamera();
+    setLiveStatus('Scanner reset.');
+  };
+
+  const handleKeyDownTab = (e: React.KeyboardEvent, targetTab: 'upload' | 'camera') => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      const nextTab = targetTab === 'upload' ? 'camera' : 'upload';
+      if (nextTab === 'camera') {
+        setActiveTab('camera');
+      } else {
+        stopCamera();
+        setActiveTab('upload');
+      }
+      const nextEl = document.getElementById(`tab-${nextTab}`);
+      nextEl?.focus();
+    }
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
+      {/* Screen Reader Live Region */}
+      <div className="sr-only" role="status" aria-live="polite">
+        {liveStatus}
+      </div>
+
       {/* Notifications */}
       {generalError && (
-        <Alert type="error" title="Scanner Notice" message={generalError} onClose={() => setGeneralError(null)} />
+        <Alert
+          type="error"
+          title="Scanner Notice"
+          message={generalError}
+          onClose={() => setGeneralError(null)}
+        />
       )}
 
       {cameraError && (
-        <Alert type="warning" title="Camera Access" message={cameraError} onClose={() => setCameraError(null)} />
+        <Alert
+          type="warning"
+          title="Camera Notice"
+          message={cameraError}
+          onClose={() => setCameraError(null)}
+        />
       )}
 
-      {/* Mode Selector Tabs */}
+      {/* Mode Selector Tabs with Semantic ARIA */}
       <div className="flex items-center justify-center">
-        <div className="bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl flex items-center space-x-1 shadow-inner max-w-sm w-full">
+        <div
+          role="tablist"
+          aria-label="Scanner input mode"
+          className="bg-slate-100 dark:bg-slate-900 p-1.5 rounded-2xl flex items-center space-x-1 shadow-inner max-w-sm w-full border border-slate-200/90 dark:border-slate-800"
+        >
           <button
+            id="tab-upload"
             type="button"
+            role="tab"
+            aria-selected={activeTab === 'upload'}
+            aria-controls="panel-upload"
+            tabIndex={activeTab === 'upload' ? 0 : -1}
             onClick={() => {
               stopCamera();
               setActiveTab('upload');
             }}
+            onKeyDown={(e) => handleKeyDownTab(e, 'upload')}
             className={`flex-1 py-2.5 px-4 text-xs font-bold rounded-xl flex items-center justify-center space-x-2 transition-all ${
               activeTab === 'upload'
-                ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-sm'
+                ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-xs border border-slate-200/80 dark:border-slate-700'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            <Upload size={14} />
+            <Upload size={14} aria-hidden="true" />
             <span>Upload Image</span>
           </button>
 
           <button
+            id="tab-camera"
             type="button"
+            role="tab"
+            aria-selected={activeTab === 'camera'}
+            aria-controls="panel-camera"
+            tabIndex={activeTab === 'camera' ? 0 : -1}
             onClick={() => {
               setActiveTab('camera');
             }}
+            onKeyDown={(e) => handleKeyDownTab(e, 'camera')}
             className={`flex-1 py-2.5 px-4 text-xs font-bold rounded-xl flex items-center justify-center space-x-2 transition-all ${
               activeTab === 'camera'
-                ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-sm'
+                ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-xs border border-slate-200/80 dark:border-slate-700'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            <Camera size={14} />
-            <span>Camera Scanner</span>
+            <Camera size={14} aria-hidden="true" />
+            <span>Scan with Camera</span>
           </button>
         </div>
       </div>
 
-      {/* Main Scanner Section */}
+      {/* Main Scanner Workspace */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Area: Viewport (Upload Dropzone or Camera Stream) */}
+        {/* Left Column: Viewport (Upload Dropzone or Camera Stream) */}
         <div className="lg:col-span-7 space-y-4">
           {activeTab === 'upload' ? (
-            !imagePreviewUrl ? (
-              <FileDropzone
-                onFilesSelected={handleFilesSelected}
-                accept="image/png,image/jpeg,image/webp,image/gif"
-                multiple={false}
-                subtitle="Upload or drop any photo or screenshot containing a QR code or barcode"
-              />
-            ) : (
-              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-                <div className="p-3.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                  <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 truncate max-w-xs">
-                    {uploadedFile?.name}
-                  </span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleReset}
-                    className="text-slate-500 hover:text-red-500 text-xs flex items-center space-x-1"
-                  >
-                    <RotateCcw size={12} />
-                    <span>Upload Another</span>
-                  </Button>
-                </div>
+            <div
+              id="panel-upload"
+              role="tabpanel"
+              aria-labelledby="tab-upload"
+              tabIndex={0}
+              className="outline-none"
+            >
+              {!imagePreviewUrl ? (
+                <FileDropzone
+                  onFilesSelected={handleFilesSelected}
+                  accept="image/png,image/jpeg,image/webp,image/gif"
+                  multiple={false}
+                  subtitle="Upload or drop any photo or screenshot containing a QR code or barcode"
+                />
+              ) : (
+                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs overflow-hidden">
+                  <div className="p-3.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 truncate max-w-xs">
+                      {uploadedFile?.name}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleReset}
+                      leftIcon={<RotateCcw size={12} />}
+                      className="text-slate-500 hover:text-red-500 text-xs"
+                    >
+                      Upload Another
+                    </Button>
+                  </div>
 
-                <div className="p-6 bg-slate-50 dark:bg-slate-950 flex items-center justify-center min-h-[300px] max-h-[420px] overflow-hidden">
-                  <img
-                    src={imagePreviewUrl}
-                    alt="Uploaded code"
-                    className="max-h-[360px] max-w-full object-contain rounded-lg shadow-sm"
-                  />
+                  <div className="p-6 bg-slate-50 dark:bg-slate-950 flex items-center justify-center min-h-[300px] max-h-[420px] overflow-hidden">
+                    <img
+                      src={imagePreviewUrl}
+                      alt="Uploaded barcode or QR code preview"
+                      className="max-h-[360px] max-w-full object-contain rounded-lg shadow-sm"
+                    />
+                  </div>
                 </div>
-              </div>
-            )
+              )}
+            </div>
           ) : (
             /* Camera Mode */
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+            <div
+              id="panel-camera"
+              role="tabpanel"
+              aria-labelledby="tab-camera"
+              tabIndex={0}
+              className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs overflow-hidden outline-none"
+            >
               <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <Camera size={16} className="text-blue-600 dark:text-blue-400" />
+                  <Camera size={16} className="text-blue-600 dark:text-blue-400" aria-hidden="true" />
                   <span className="text-xs font-bold text-slate-900 dark:text-white">
                     Live Camera Feed
                   </span>
                 </div>
 
-                {isCameraActive && (
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 animate-pulse">
+                {cameraStatus === 'active' && (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 animate-pulse">
                     Scanning active
                   </span>
                 )}
@@ -335,46 +433,107 @@ export function QrScannerTool() {
                   playsInline
                   muted
                   className={`w-full max-h-[380px] object-contain ${
-                    !isCameraActive ? 'hidden' : ''
+                    cameraStatus !== 'active' ? 'hidden' : ''
                   }`}
                 />
 
-                {isCameraActive && (
-                  /* Target Reticle Overlay */
+                {/* Active Viewfinder Reticle Overlay */}
+                {cameraStatus === 'active' && (
                   <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
                     <div className="w-56 h-56 border-2 border-blue-500/80 rounded-2xl relative shadow-lg">
                       <div className="absolute -top-1 -left-1 w-5 h-5 border-t-4 border-l-4 border-blue-400 rounded-tl" />
                       <div className="absolute -top-1 -right-1 w-5 h-5 border-t-4 border-r-4 border-blue-400 rounded-tr" />
                       <div className="absolute -bottom-1 -left-1 w-5 h-5 border-b-4 border-l-4 border-blue-400 rounded-bl" />
                       <div className="absolute -bottom-1 -right-1 w-5 h-5 border-b-4 border-r-4 border-blue-400 rounded-br" />
-                      <div className="absolute inset-x-4 top-1/2 h-0.5 bg-blue-500/60 shadow-xs animate-pulse" />
+                      {/* Animated scan line */}
+                      <div className="absolute inset-x-4 top-1/2 h-0.5 bg-blue-500/80 shadow-[0_0_8px_rgba(59,130,246,0.8)] animate-pulse" />
                     </div>
                   </div>
                 )}
 
-                {!isCameraActive && (
+                {/* Requesting Camera Access State */}
+                {cameraStatus === 'requesting' && (
+                  <div className="p-8 text-center text-slate-400 space-y-3">
+                    <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto" />
+                    <h4 className="text-sm font-semibold text-white">Accessing Camera...</h4>
+                    <p className="text-xs text-slate-400 max-w-xs mx-auto">
+                      Please allow camera permission in your browser prompt.
+                    </p>
+                  </div>
+                )}
+
+                {/* Camera Inactive (Idle) State */}
+                {cameraStatus === 'idle' && (
                   <div className="p-8 text-center text-slate-400 space-y-4">
                     <div className="w-16 h-16 rounded-2xl bg-slate-800 flex items-center justify-center mx-auto text-slate-300">
-                      <Camera size={28} />
+                      <Camera size={28} aria-hidden="true" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-semibold text-white">Camera is inactive</h4>
+                      <h4 className="text-sm font-semibold text-white">Camera is Inactive</h4>
                       <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
-                        Click below to begin scanning. Camera permission is only requested upon click.
+                        Click below to start scanning. Camera permission is only requested upon click.
                       </p>
                     </div>
                     <Button
                       onClick={startCamera}
+                      leftIcon={<Camera size={14} />}
                       className="text-xs font-bold py-2.5 px-6 shadow-md shadow-blue-500/20"
                     >
-                      <Camera size={14} className="mr-1.5" />
-                      <span>Start Camera</span>
+                      Start Camera
                     </Button>
+                  </div>
+                )}
+
+                {/* Camera Denied / Error / Unavailable States */}
+                {(cameraStatus === 'denied' ||
+                  cameraStatus === 'unavailable' ||
+                  cameraStatus === 'error') && (
+                  <div className="p-8 text-center text-slate-400 space-y-4">
+                    <div className="w-16 h-16 rounded-2xl bg-amber-950/50 text-amber-400 flex items-center justify-center mx-auto border border-amber-900/50">
+                      <AlertTriangle size={28} aria-hidden="true" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-white">
+                        {cameraStatus === 'denied'
+                          ? 'Camera Permission Denied'
+                          : cameraStatus === 'unavailable'
+                          ? 'Camera Unavailable'
+                          : 'Camera Error'}
+                      </h4>
+                      <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
+                        {cameraStatus === 'denied'
+                          ? 'Please enable camera permissions in your browser address bar settings, or switch to Upload Image mode.'
+                          : 'Camera access is not available on this device. You can upload an image or photo directly.'}
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={startCamera}
+                        leftIcon={<RefreshCw size={13} />}
+                        className="text-xs text-slate-200 border-slate-700 hover:bg-slate-800"
+                      >
+                        Try Again
+                      </Button>
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => {
+                          stopCamera();
+                          setActiveTab('upload');
+                        }}
+                        leftIcon={<Upload size={13} />}
+                        className="text-xs"
+                      >
+                        Upload Image
+                      </Button>
+                    </div>
                   </div>
                 )}
               </div>
 
-              {isCameraActive && (
+              {cameraStatus === 'active' && (
                 <div className="p-3 bg-slate-900 border-t border-slate-800 flex items-center justify-between">
                   <span className="text-[11px] text-slate-400">
                     Align code inside the viewfinder box
@@ -383,10 +542,10 @@ export function QrScannerTool() {
                     variant="danger"
                     size="sm"
                     onClick={stopCamera}
+                    leftIcon={<CameraOff size={13} />}
                     className="text-xs py-1 px-3"
                   >
-                    <CameraOff size={13} className="mr-1" />
-                    <span>Stop Camera</span>
+                    Stop Camera
                   </Button>
                 </div>
               )}
@@ -394,10 +553,10 @@ export function QrScannerTool() {
           )}
 
           {/* Privacy & Safety Note */}
-          <div className="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+          <div className="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/90 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
             <span className="flex items-center space-x-1.5">
-              <ShieldCheck size={16} className="text-emerald-500" />
-              <span>100% Client-Side Scan Engine • No images sent anywhere</span>
+              <ShieldCheck size={16} className="text-emerald-500 shrink-0" aria-hidden="true" />
+              <span>100% Client-Side Scan Engine • No images sent to any server</span>
             </span>
             <span className="text-[11px] font-medium text-slate-600 dark:text-slate-400">
               Safe Preview Active
@@ -405,12 +564,12 @@ export function QrScannerTool() {
           </div>
         </div>
 
-        {/* Right Area: Detected Code Results Panel */}
+        {/* Right Column: Detected Code Results Panel */}
         <div className="lg:col-span-5 space-y-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 shadow-2xs space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <div className="flex items-center space-x-2">
-                <ScanBarcode size={18} className="text-blue-600 dark:text-blue-400" />
+                <ScanBarcode size={18} className="text-blue-600 dark:text-blue-400" aria-hidden="true" />
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                   Decoded Results
                 </h3>
@@ -420,15 +579,15 @@ export function QrScannerTool() {
                   variant="ghost"
                   size="sm"
                   onClick={handleReset}
+                  leftIcon={<RotateCcw size={12} />}
                   className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
                 >
-                  <RotateCcw size={12} className="mr-1" />
-                  <span>Clear</span>
+                  Clear
                 </Button>
               )}
             </div>
 
-            {/* Analyzing spinner */}
+            {/* Analyzing Spinner */}
             {isAnalyzingImage && (
               <div className="py-12 text-center space-y-3">
                 <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
@@ -436,70 +595,81 @@ export function QrScannerTool() {
               </div>
             )}
 
-            {/* Success Detected Result List */}
+            {/* Success: Detected Results List */}
             {!isAnalyzingImage && results.length > 0 && (
               <div className="space-y-3">
                 <div className="flex items-center space-x-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                  <CheckCircle2 size={15} />
+                  <CheckCircle2 size={15} aria-hidden="true" />
                   <span>
                     {results.length === 1 ? '1 Code Detected' : `${results.length} Codes Detected`}
                   </span>
                 </div>
 
-                {results.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/80 space-y-3 shadow-xs"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-800 dark:bg-blue-950/70 dark:text-blue-300">
-                        {item.format}
-                      </span>
-                      <span className="text-[10px] text-slate-400 font-mono">
-                        {new Date(item.timestamp).toLocaleTimeString()}
-                      </span>
-                    </div>
+                {results.map((item, idx) => {
+                  const isSafeUrl = item.isUrl && isValidWebUrl(item.value);
+                  const formattedType = item.format.replace(/_/g, ' ');
 
-                    {/* Escaped safe text display */}
-                    <div className="p-3 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 font-mono text-xs text-slate-900 dark:text-slate-100 break-all select-all max-h-40 overflow-y-auto">
-                      {item.value}
-                    </div>
+                  return (
+                    <div
+                      key={idx}
+                      className="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/80 space-y-3 shadow-xs"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-800 dark:bg-blue-950/70 dark:text-blue-300">
+                          {formattedType}
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-mono">
+                          {new Date(item.timestamp).toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit'
+                          })}
+                        </span>
+                      </div>
 
-                    {/* Actions */}
-                    <div className="flex items-center space-x-2 pt-1">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleCopy(item.value, idx)}
-                        className="flex-1 text-xs font-semibold flex items-center justify-center space-x-1.5"
-                      >
-                        {copiedIndex === idx ? (
-                          <>
-                            <Check size={13} className="text-emerald-500" />
-                            <span className="text-emerald-600 dark:text-emerald-400">Copied</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy size={13} />
-                            <span>Copy Value</span>
-                          </>
-                        )}
-                      </Button>
+                      {/* Escaped safe text display with scroll if long */}
+                      <div className="p-3 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 font-mono text-xs text-slate-900 dark:text-slate-100 break-all select-all max-h-40 overflow-y-auto leading-relaxed">
+                        {item.value}
+                      </div>
 
-                      {item.isUrl && (
-                        <a
-                          href={item.value}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center space-x-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors"
+                      {/* Action buttons */}
+                      <div className="flex items-center space-x-2 pt-1">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleCopy(item.value, idx)}
+                          leftIcon={
+                            copiedIndex === idx ? (
+                              <Check size={13} className="text-emerald-500" />
+                            ) : (
+                              <Copy size={13} />
+                            )
+                          }
+                          className="flex-1 text-xs font-semibold flex items-center justify-center space-x-1.5"
                         >
-                          <span>Open Link</span>
-                          <ExternalLink size={12} />
-                        </a>
-                      )}
+                          {copiedIndex === idx ? (
+                            <span className="text-emerald-600 dark:text-emerald-400">Copied</span>
+                          ) : (
+                            <span>Copy Value</span>
+                          )}
+                        </Button>
+
+                        {/* Strict URL Safety: only show Open Link if isValidWebUrl is strictly true */}
+                        {isSafeUrl && (
+                          <a
+                            href={item.value}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center space-x-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                          >
+                            <span>Open Link</span>
+                            <ExternalLink size={12} aria-hidden="true" />
+                          </a>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
 
@@ -507,7 +677,7 @@ export function QrScannerTool() {
             {!isAnalyzingImage && noResultFound && (
               <div className="py-10 text-center space-y-3 px-4">
                 <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto">
-                  <AlertTriangle size={24} />
+                  <AlertTriangle size={24} aria-hidden="true" />
                 </div>
                 <h4 className="text-sm font-bold text-slate-800 dark:text-white">
                   No Code Found
@@ -521,7 +691,7 @@ export function QrScannerTool() {
             {/* Initial Idle State */}
             {!isAnalyzingImage && results.length === 0 && !noResultFound && (
               <div className="py-12 text-center text-slate-400 space-y-2">
-                <ScanBarcode size={36} className="mx-auto opacity-40 text-slate-400" />
+                <ScanBarcode size={36} className="mx-auto opacity-40 text-slate-400" aria-hidden="true" />
                 <p className="text-xs text-slate-500 dark:text-slate-400">
                   Upload an image or start camera to scan
                 </p>
@@ -529,11 +699,20 @@ export function QrScannerTool() {
             )}
           </div>
 
-          {/* Supported Formats Card */}
-          <div className="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-800 text-xs space-y-2">
-            <span className="font-semibold text-slate-700 dark:text-slate-300 block">
-              Supported Formats
-            </span>
+          {/* Engine & Supported Formats Card */}
+          <div className="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/90 dark:border-slate-800 text-xs space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold text-slate-700 dark:text-slate-300 block">
+                Supported Formats
+              </span>
+              <span className="inline-flex items-center space-x-1 text-[10px] text-slate-500 dark:text-slate-400">
+                <Cpu size={12} className="text-blue-500" aria-hidden="true" />
+                <span>
+                  {hasHardwareAcceleration ? 'Hardware Accelerated' : 'Client Software Engine'}
+                </span>
+              </span>
+            </div>
+
             <div className="flex flex-wrap gap-1.5">
               {[
                 'QR Code',

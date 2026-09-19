@@ -32,8 +32,17 @@ import {
   Sliders,
   Palette,
   Eye,
-  ShieldCheck
+  ShieldCheck,
+  Sparkles
 } from 'lucide-react';
+
+const QR_TYPES: { id: QRType; label: string; icon: React.ReactNode }[] = [
+  { id: 'url', label: 'Website URL', icon: <LinkIcon size={14} /> },
+  { id: 'text', label: 'Plain Text', icon: <FileText size={14} /> },
+  { id: 'email', label: 'Email', icon: <Mail size={14} /> },
+  { id: 'phone', label: 'Phone', icon: <Phone size={14} /> },
+  { id: 'wifi', label: 'WiFi Network', icon: <Wifi size={14} /> }
+];
 
 export function QrGeneratorTool() {
   const [type, setType] = useState<QRType>('url');
@@ -62,6 +71,7 @@ export function QrGeneratorTool() {
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [copied, setCopied] = useState<boolean>(false);
+  const [statusMessage, setStatusMessage] = useState<string>('');
 
   // Build payload
   const currentPayload = useMemo(() => {
@@ -147,6 +157,7 @@ export function QrGeneratorTool() {
   const handleDownloadPng = () => {
     if (qrDataUrl) {
       downloadDataUrl(qrDataUrl, 'zappebble-qr.png');
+      setStatusMessage('QR Code downloaded as PNG');
     }
   };
 
@@ -154,6 +165,7 @@ export function QrGeneratorTool() {
     if (qrSvgString) {
       const blob = new Blob([qrSvgString], { type: 'image/svg+xml' });
       downloadBlob(blob, 'zappebble-qr.svg');
+      setStatusMessage('QR Code downloaded as SVG');
     }
   };
 
@@ -161,6 +173,7 @@ export function QrGeneratorTool() {
     const ok = await copyToClipboard(currentPayload);
     if (ok) {
       setCopied(true);
+      setStatusMessage('QR payload copied to clipboard');
       setTimeout(() => setCopied(false), 2000);
     }
   };
@@ -182,72 +195,91 @@ export function QrGeneratorTool() {
     setForegroundColor('#000000');
     setBackgroundColor('#ffffff');
     setErrorMessage(null);
+    setStatusMessage('QR settings reset to default');
   };
 
   return (
-    <div className="space-y-8">
-      {/* Type Selector Tabs */}
-      <div className="flex flex-wrap items-center justify-center gap-2 p-1.5 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-        {[
-          { id: 'url', label: 'Website URL', icon: <LinkIcon size={14} /> },
-          { id: 'text', label: 'Plain Text', icon: <FileText size={14} /> },
-          { id: 'email', label: 'Email', icon: <Mail size={14} /> },
-          { id: 'phone', label: 'Phone', icon: <Phone size={14} /> },
-          { id: 'wifi', label: 'WiFi Network', icon: <Wifi size={14} /> }
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            onClick={() => setType(tab.id as QRType)}
-            className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
-              type === tab.id
-                ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm border border-slate-200 dark:border-slate-700'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            {tab.icon}
-            <span>{tab.label}</span>
-          </button>
-        ))}
+    <div className="space-y-6">
+      {/* Screen Reader Live Region for Discrete Actions */}
+      <div className="sr-only" role="status" aria-live="polite">
+        {statusMessage}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      {/* Type Selector with Semantic Radiogroup */}
+      <fieldset className="w-full">
+        <legend className="sr-only">Select QR Code Type</legend>
+        <div
+          role="radiogroup"
+          aria-label="QR Code Type"
+          className="flex flex-wrap items-center justify-center gap-2 p-1.5 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800"
+        >
+          {QR_TYPES.map((tab) => {
+            const isSelected = type === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                role="radio"
+                aria-checked={isSelected}
+                onClick={() => setType(tab.id)}
+                className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
+                  isSelected
+                    ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-xs border border-slate-200/90 dark:border-slate-700'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                {tab.icon}
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </fieldset>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Input Forms & Settings */}
-        <div className="lg:col-span-7 space-y-6">
+        <div className="lg:col-span-7 space-y-5">
           {/* Dynamic Content Form */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center">
+          <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs space-y-4">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white flex items-center">
               <span>QR Content</span>
-              <span className="ml-2 text-[11px] font-normal text-slate-500">
-                ({type.toUpperCase()})
+              <span className="ml-2 text-[10px] font-medium px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 uppercase">
+                {type}
               </span>
             </h3>
 
             {/* URL Form */}
             {type === 'url' && (
-              <Input
-                label="Destination URL"
-                type="url"
-                value={urlInput}
-                onChange={(e) => setUrlInput(e.target.value)}
-                placeholder="https://yourwebsite.com"
-                leftIcon={<LinkIcon size={16} />}
-                helperText="Enter a full web address or domain."
-              />
+              <div className="space-y-1.5">
+                <Input
+                  id="qr-url-input"
+                  label="Destination URL"
+                  type="url"
+                  value={urlInput}
+                  onChange={(e) => setUrlInput(e.target.value)}
+                  placeholder="https://yourwebsite.com"
+                  leftIcon={<LinkIcon size={16} />}
+                  helperText="Enter a full web address or domain name."
+                />
+              </div>
             )}
 
             {/* Plain Text Form */}
             {type === 'text' && (
-              <div>
-                <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="qr-text-input"
+                  className="block text-xs font-semibold text-slate-700 dark:text-slate-300"
+                >
                   Text Content
                 </label>
                 <textarea
+                  id="qr-text-input"
                   rows={4}
                   value={textInput}
                   onChange={(e) => setTextInput(e.target.value)}
-                  placeholder="Enter any text, Unicode characters, or notes..."
-                  className="w-full p-3 text-xs sm:text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter any text, notes, or Unicode characters..."
+                  className="w-full p-3 text-xs sm:text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500"
                 />
               </div>
             )}
@@ -256,6 +288,7 @@ export function QrGeneratorTool() {
             {type === 'email' && (
               <div className="space-y-3">
                 <Input
+                  id="qr-email-recipient"
                   label="Recipient Email"
                   type="email"
                   value={emailInput}
@@ -264,22 +297,27 @@ export function QrGeneratorTool() {
                   leftIcon={<Mail size={16} />}
                 />
                 <Input
+                  id="qr-email-subject"
                   label="Subject (Optional)"
                   type="text"
                   value={emailSubject}
                   onChange={(e) => setEmailSubject(e.target.value)}
                   placeholder="Subject line"
                 />
-                <div>
-                  <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="qr-email-body"
+                    className="block text-xs font-semibold text-slate-700 dark:text-slate-300"
+                  >
                     Pre-filled Body (Optional)
                   </label>
                   <textarea
+                    id="qr-email-body"
                     rows={3}
                     value={emailBody}
                     onChange={(e) => setEmailBody(e.target.value)}
                     placeholder="Enter email message body..."
-                    className="w-full p-2.5 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full p-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500"
                   />
                 </div>
               </div>
@@ -288,13 +326,14 @@ export function QrGeneratorTool() {
             {/* Phone Form */}
             {type === 'phone' && (
               <Input
+                id="qr-phone-input"
                 label="Phone Number"
                 type="tel"
                 value={phoneInput}
                 onChange={(e) => setPhoneInput(e.target.value)}
                 placeholder="+1 555 123 4567"
                 leftIcon={<Phone size={16} />}
-                helperText="Scanning will prompt user to dial this number."
+                helperText="Scanning will automatically prompt user to dial this phone number."
               />
             )}
 
@@ -302,6 +341,7 @@ export function QrGeneratorTool() {
             {type === 'wifi' && (
               <div className="space-y-3.5">
                 <Input
+                  id="qr-wifi-ssid"
                   label="Network Name (SSID)"
                   type="text"
                   value={wifiSsid}
@@ -311,25 +351,30 @@ export function QrGeneratorTool() {
                 />
 
                 <Input
-                  label="Password"
+                  id="qr-wifi-password"
+                  label="Wi-Fi Password"
                   type="text"
                   value={wifiPassword}
                   onChange={(e) => setWifiPassword(e.target.value)}
                   placeholder="Wi-Fi Password"
-                  helperText="Never transmitted; processed 100% locally in your browser memory."
+                  helperText="Never uploaded; processed 100% locally in your browser memory."
                 />
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                    <label
+                      htmlFor="qr-wifi-security"
+                      className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5"
+                    >
                       Security Type
                     </label>
                     <select
+                      id="qr-wifi-security"
                       value={wifiSecurity}
                       onChange={(e) => setWifiSecurity(e.target.value as WiFiSecurityType)}
-                      className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full h-9 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500"
                     >
-                      <option value="WPA">WPA / WPA2 (Most Common)</option>
+                      <option value="WPA">WPA / WPA2 (Standard)</option>
                       <option value="WEP">WEP</option>
                       <option value="nopass">None (Open Network)</option>
                     </select>
@@ -354,22 +399,26 @@ export function QrGeneratorTool() {
           </div>
 
           {/* Customization Settings */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center">
+          <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs space-y-4">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white flex items-center">
               <Sliders size={14} className="mr-1.5 text-blue-500" />
               <span>QR Customization</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Size */}
-              <div>
-                <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="qr-size-select"
+                  className="block text-xs font-semibold text-slate-700 dark:text-slate-300"
+                >
                   Resolution Size
                 </label>
                 <select
+                  id="qr-size-select"
                   value={size}
                   onChange={(e) => setSize(Number(e.target.value))}
-                  className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-xs text-slate-900 dark:text-slate-100"
+                  className="w-full h-9 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500"
                 >
                   <option value="128">128 × 128 px (Compact)</option>
                   <option value="256">256 × 256 px (Standard)</option>
@@ -379,14 +428,18 @@ export function QrGeneratorTool() {
               </div>
 
               {/* Error Correction */}
-              <div>
-                <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="qr-ecc-select"
+                  className="block text-xs font-semibold text-slate-700 dark:text-slate-300"
+                >
                   Error Correction Level
                 </label>
                 <select
+                  id="qr-ecc-select"
                   value={errorCorrection}
                   onChange={(e) => setErrorCorrection(e.target.value as QRErrorCorrection)}
-                  className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-xs text-slate-900 dark:text-slate-100"
+                  className="w-full h-9 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500"
                 >
                   <option value="L">Low (~7% recovery)</option>
                   <option value="M">Medium (~15% recovery, Recommended)</option>
@@ -395,43 +448,56 @@ export function QrGeneratorTool() {
                 </select>
               </div>
 
-              {/* Colors */}
-              <div>
-                <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+              {/* Foreground Color */}
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="qr-fg-color-input"
+                  className="block text-xs font-semibold text-slate-700 dark:text-slate-300"
+                >
                   Foreground Color
                 </label>
                 <div className="flex items-center space-x-2">
                   <input
+                    id="qr-fg-color-picker"
                     type="color"
                     value={foregroundColor}
                     onChange={(e) => setForegroundColor(e.target.value)}
-                    className="w-9 h-9 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer p-0.5 bg-white dark:bg-slate-800"
+                    aria-label="Choose foreground color"
+                    className="w-9 h-9 rounded-lg border border-slate-200 dark:border-slate-700 cursor-pointer p-0.5 bg-white dark:bg-slate-800"
                   />
                   <input
+                    id="qr-fg-color-input"
                     type="text"
                     value={foregroundColor}
                     onChange={(e) => setForegroundColor(e.target.value)}
-                    className="w-28 px-2 py-1.5 text-xs font-mono rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
+                    className="w-28 h-9 px-2.5 text-xs font-mono rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 uppercase"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+              {/* Background Color */}
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="qr-bg-color-input"
+                  className="block text-xs font-semibold text-slate-700 dark:text-slate-300"
+                >
                   Background Color
                 </label>
                 <div className="flex items-center space-x-2">
                   <input
+                    id="qr-bg-color-picker"
                     type="color"
                     value={backgroundColor}
                     onChange={(e) => setBackgroundColor(e.target.value)}
-                    className="w-9 h-9 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer p-0.5 bg-white dark:bg-slate-800"
+                    aria-label="Choose background color"
+                    className="w-9 h-9 rounded-lg border border-slate-200 dark:border-slate-700 cursor-pointer p-0.5 bg-white dark:bg-slate-800"
                   />
                   <input
+                    id="qr-bg-color-input"
                     type="text"
                     value={backgroundColor}
                     onChange={(e) => setBackgroundColor(e.target.value)}
-                    className="w-28 px-2 py-1.5 text-xs font-mono rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
+                    className="w-28 h-9 px-2.5 text-xs font-mono rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 uppercase"
                   />
                 </div>
               </div>
@@ -439,10 +505,13 @@ export function QrGeneratorTool() {
 
             {/* Contrast Warning if < 3.0:1 */}
             {contrastRatio.ratio < 3.0 && (
-              <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 text-xs text-amber-800 dark:text-amber-300 flex items-center space-x-2">
+              <div
+                role="alert"
+                className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 text-xs text-amber-800 dark:text-amber-300 flex items-center space-x-2"
+              >
                 <AlertTriangle size={16} className="text-amber-600 shrink-0" />
                 <span>
-                  Low contrast ({contrastRatio.formattedRatio}). These colors may reduce QR scan reliability on older cameras.
+                  Low contrast ({contrastRatio.formattedRatio}). Choose a darker foreground or lighter background to ensure reliable scanning on mobile cameras.
                 </span>
               </div>
             )}
@@ -450,16 +519,16 @@ export function QrGeneratorTool() {
         </div>
 
         {/* Right Column: Live Preview & Downloads */}
-        <div className="lg:col-span-5 space-y-6">
-          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col items-center text-center space-y-5">
+        <div className="lg:col-span-5 space-y-5">
+          <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs flex flex-col items-center text-center space-y-5">
             <div className="flex items-center justify-between w-full border-b border-slate-100 dark:border-slate-800 pb-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                 Live QR Preview
               </span>
               <button
                 type="button"
                 onClick={handleReset}
-                className="text-xs text-slate-500 hover:text-red-500 flex items-center space-x-1"
+                className="text-xs text-slate-500 hover:text-red-500 flex items-center space-x-1 transition-colors"
                 title="Reset all settings to default"
               >
                 <RotateCcw size={12} />
@@ -467,15 +536,15 @@ export function QrGeneratorTool() {
               </button>
             </div>
 
-            {/* QR Card Container */}
-            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center min-w-[220px] min-h-[220px]">
+            {/* QR Card Container with Quiet Zone */}
+            <div className="p-5 rounded-2xl bg-white border border-slate-200/90 dark:border-slate-700 shadow-xs flex items-center justify-center min-w-[240px] min-h-[240px]">
               {isGenerating ? (
-                <div className="text-xs text-slate-400 animate-pulse">Generating QR...</div>
+                <div className="text-xs text-slate-400 animate-pulse">Synthesizing QR...</div>
               ) : qrDataUrl ? (
                 <img
                   src={qrDataUrl}
                   alt="Generated QR Code"
-                  className="max-w-[240px] max-h-[240px] object-contain rounded-md"
+                  className="max-w-[240px] max-h-[240px] object-contain rounded-sm"
                 />
               ) : (
                 <div className="text-xs text-slate-400">No QR preview available</div>
@@ -483,7 +552,10 @@ export function QrGeneratorTool() {
             </div>
 
             {errorMessage && (
-              <div className="p-2.5 rounded-lg bg-red-50 text-red-600 text-xs flex items-center">
+              <div
+                role="alert"
+                className="p-3 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-300 text-xs flex items-center border border-red-200 dark:border-red-900/50"
+              >
                 <AlertTriangle size={14} className="mr-1.5 shrink-0" />
                 <span>{errorMessage}</span>
               </div>
@@ -498,6 +570,7 @@ export function QrGeneratorTool() {
                   onClick={handleDownloadPng}
                   disabled={!qrDataUrl}
                   leftIcon={<Download size={14} />}
+                  className="shadow-xs font-semibold"
                 >
                   Download PNG
                 </Button>
@@ -508,6 +581,7 @@ export function QrGeneratorTool() {
                   onClick={handleDownloadSvg}
                   disabled={!qrSvgString}
                   leftIcon={<Download size={14} />}
+                  className="font-medium"
                 >
                   Download SVG
                 </Button>
@@ -516,7 +590,7 @@ export function QrGeneratorTool() {
               <button
                 type="button"
                 onClick={handleCopyPayload}
-                className="w-full py-2 px-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center justify-center space-x-1.5 transition-colors"
+                className="w-full py-2.5 px-3 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center justify-center space-x-1.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 {copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
                 <span>{copied ? 'Copied to Clipboard!' : 'Copy QR Payload'}</span>
@@ -524,8 +598,8 @@ export function QrGeneratorTool() {
             </div>
 
             <div className="text-[11px] text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-medium pt-1">
-              <ShieldCheck size={13} className="mr-1" />
-              <span>100% Client-Side QR Generation. No network requests.</span>
+              <ShieldCheck size={13} className="mr-1 shrink-0" />
+              <span>100% Client-Side QR Generation • Zero network payloads</span>
             </div>
           </div>
         </div>
@@ -533,3 +607,4 @@ export function QrGeneratorTool() {
     </div>
   );
 }
+
