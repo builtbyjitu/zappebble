@@ -13,6 +13,7 @@ import { ImageConverterContent } from '@/components/tools/ImageConverterContent'
 import { JsonFormatterTool } from '@/components/tools/JsonFormatterTool';
 import { JsonFormatterContent } from '@/components/tools/JsonFormatterContent';
 import { WordCounterTool } from '@/components/tools/WordCounterTool';
+import { WordCounterContent } from '@/components/tools/WordCounterContent';
 import { QrGeneratorTool } from '@/components/tools/QrGeneratorTool';
 import { QrGeneratorContent } from '@/components/tools/QrGeneratorContent';
 import { ColorPickerTool } from '@/components/tools/ColorPickerTool';
@@ -111,6 +112,8 @@ export default function ToolPage({ params }: ToolPageProps) {
         return <QrGeneratorContent />;
       case 'json-formatter':
         return <JsonFormatterContent />;
+      case 'word-counter':
+        return <WordCounterContent />;
       default:
         return undefined;
     }

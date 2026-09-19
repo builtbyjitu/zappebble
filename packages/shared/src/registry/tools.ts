@@ -402,35 +402,70 @@ export const TOOLS: ToolDefinition[] = [
     websiteSupported: true,
     seo: {
       title: 'Free Word Counter & Character Counter Online | ZapPebble',
-      description: 'Count words, characters (with and without spaces), sentences, and reading time online in real time. Check SEO meta title and social post character limits.',
+      description: 'Count words, characters (with and without spaces), sentences, paragraphs, lines, and reading time in your browser. Check practical social and SEO character benchmarks without uploading your text.',
       canonicalPath: '/tools/word-counter',
-      keywords: ['word counter', 'character counter', 'word count online', 'reading time calculator', 'sentence counter', 'letter count']
+      keywords: [
+        'word counter',
+        'character counter',
+        'word counter online',
+        'character counter online',
+        'count words',
+        'sentence counter',
+        'paragraph counter',
+        'reading time calculator',
+        'seo character counter',
+        'private word counter'
+      ]
     },
     howItWorks: [
       {
         step: 1,
-        title: 'Enter or Paste Text',
-        description: 'Type or paste your text into the real-time writing analysis area.'
+        title: 'Paste or Type Your Text',
+        description: 'Paste or type your draft into the text editor. Real-time statistics begin calculating immediately.'
       },
       {
         step: 2,
-        title: 'Review Live Statistics',
-        description: 'View real-time counters for words, characters, sentences, paragraphs, and reading duration.'
+        title: 'Review Live Writing Metrics',
+        description: 'Inspect instant counts for words, characters, characters without spaces, sentences, paragraphs, lines, and reading time.'
       },
       {
         step: 3,
-        title: 'Inspect Platform Limits',
-        description: 'Check character counts against common benchmarks like SEO title tags, meta descriptions, and social posts.'
+        title: 'Check Limits & Copy',
+        description: 'Select an active character benchmark (X Post, SEO Title, or Meta Description) to verify limits, then copy your draft with one click.'
       }
     ],
     faq: [
       {
-        question: 'How is reading time calculated?',
-        answer: 'Reading time is computed using the average adult reading speed benchmark of 200 words per minute.'
+        question: 'What does this word counter calculate?',
+        answer: 'ZapPebble calculates 9 live text metrics simultaneously: words, total characters, characters excluding spaces, sentences, paragraphs, lines, estimated reading time, average word length, and the longest word in your text.'
       },
       {
-        question: 'Does this count characters without spaces?',
-        answer: 'Yes, both total characters and characters excluding whitespaces are calculated simultaneously.'
+        question: 'How does ZapPebble count words in text?',
+        answer: 'ZapPebble uses a Unicode-aware regular expression that detects sequences of letters, numbers, and combining marks. Contractions (such as "don\'t") and hyphenated compounds (such as "state-of-the-art") are counted as single words, and non-English alphabets are fully supported.'
+      },
+      {
+        question: 'What is the difference between characters and characters without spaces?',
+        answer: 'Total characters count every letter, number, punctuation mark, symbol, and whitespace character. Characters without spaces strip out all spaces, tabs, and line breaks, which is a common measurement standard in academic abstracts, translation billing, and publishing.'
+      },
+      {
+        question: 'How is the estimated reading time calculated?',
+        answer: 'Reading time is estimated using the standard adult silent reading benchmark of 200 words per minute (WPM), rounded up to the nearest whole minute. Actual reading speeds vary depending on text complexity and reader familiarity.'
+      },
+      {
+        question: 'Are the 60-character title and 160-character description limits exact SEO rules?',
+        answer: 'No. Search engines measure title and description snippet display boundaries in pixels rather than fixed character counts. Furthermore, search engines dynamically generate snippets based on user queries. The 60 and 160 character limits are practical drafting benchmarks to help avoid ellipsis truncation.'
+      },
+      {
+        question: 'Does the word counter support non-English languages and Unicode?',
+        answer: 'Yes. The word counting engine matches Unicode letter and mark categories (\\p{L}, \\p{N}, \\p{M}), supporting accented Latin, Cyrillic, Greek, Arabic, Devanagari, and other international writing systems.'
+      },
+      {
+        question: 'Can I check character limits for X (Twitter) posts?',
+        answer: 'Yes. ZapPebble includes a dedicated 280-character benchmark for standard X (Twitter) posts, featuring a live visual progress bar that turns amber when approaching the limit and red when exceeding it.'
+      },
+      {
+        question: 'Is my text uploaded to a server or saved anywhere?',
+        answer: 'Never. All text analysis runs 100% locally inside your browser memory using client-side JavaScript. Your drafts, essays, personal notes, and confidential writings are never transmitted across the network or stored on any server.'
       }
     ],
     relatedToolSlugs: ['json-formatter', 'qr-generator'],
