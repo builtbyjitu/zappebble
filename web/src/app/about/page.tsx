@@ -3,11 +3,27 @@ import type { Metadata } from 'next';
 import { ShieldCheck, Zap, Globe, Heart } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'About ZapPebble — Free & Private Browser Utilities',
+  title: {
+    absolute: 'About ZapPebble — Free & Private Browser Utilities'
+  },
   description:
     'Learn about ZapPebble mission: providing lightning-fast, 100% private client-side browser utilities with zero infrastructure footprint.',
   alternates: {
     canonical: '/about'
+  },
+  openGraph: {
+    title: 'About ZapPebble — Free & Private Browser Utilities',
+    description:
+      'Learn about ZapPebble mission: providing lightning-fast, 100% private client-side browser utilities with zero infrastructure footprint.',
+    url: 'https://zappebble.appnix.org/about',
+    siteName: 'ZapPebble',
+    type: 'website'
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About ZapPebble — Free & Private Browser Utilities',
+    description:
+      'Learn about ZapPebble mission: providing lightning-fast, 100% private client-side browser utilities with zero infrastructure footprint.'
   }
 };
 

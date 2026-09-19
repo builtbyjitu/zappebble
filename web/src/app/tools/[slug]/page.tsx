@@ -40,7 +40,9 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
   if (!tool) return {};
 
   return {
-    title: tool.seo.title,
+    title: {
+      absolute: tool.seo.title
+    },
     description: tool.seo.description,
     keywords: tool.seo.keywords,
     alternates: {
@@ -52,6 +54,11 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
       url: `https://zappebble.appnix.org${tool.path}`,
       siteName: 'ZapPebble',
       type: 'website'
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: tool.seo.title,
+      description: tool.seo.description
     }
   };
 }

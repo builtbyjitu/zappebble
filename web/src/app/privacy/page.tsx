@@ -3,11 +3,25 @@ import type { Metadata } from 'next';
 import { ShieldCheck, Lock, CheckCircle2 } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | ZapPebble',
+  title: 'Privacy Policy',
   description:
     'Learn how ZapPebble protects your privacy through local client-side processing. Your files, documents, and code never leave your browser.',
   alternates: {
     canonical: '/privacy'
+  },
+  openGraph: {
+    title: 'Privacy Policy | ZapPebble',
+    description:
+      'Learn how ZapPebble protects your privacy through local client-side processing. Your files, documents, and code never leave your browser.',
+    url: 'https://zappebble.appnix.org/privacy',
+    siteName: 'ZapPebble',
+    type: 'website'
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Privacy Policy | ZapPebble',
+    description:
+      'Learn how ZapPebble protects your privacy through local client-side processing. Your files, documents, and code never leave your browser.'
   }
 };
 
