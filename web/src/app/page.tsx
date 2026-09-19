@@ -84,14 +84,6 @@ export default function HomePage() {
       '@type': 'Organization',
       name: 'Appnix Technologies',
       url: 'https://zappebble.appnix.org'
-    },
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: 'https://zappebble.appnix.org/tools?q={search_term_string}'
-      },
-      'query-input': 'required name=search_term_string'
     }
   };
 
