@@ -17,7 +17,7 @@ export function ToolLayout({ tool, children }: ToolLayoutProps) {
     .filter((t): t is ToolDefinition => Boolean(t));
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16">
       {/* Tool Header */}
       <ToolHeader
         title={tool.name}
@@ -27,17 +27,17 @@ export function ToolLayout({ tool, children }: ToolLayoutProps) {
       />
 
       {/* Main Interactive Tool UI Area */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none p-6 sm:p-10 mb-16">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-xs shadow-slate-200/40 dark:shadow-none p-5 sm:p-8 md:p-10 mb-12 sm:mb-16">
         {children}
       </div>
 
       {/* Benefits Section */}
-      <section className="mb-16">
-        <h2 className="text-2xl font-bold text-center tracking-tight text-slate-900 dark:text-white mb-8">
+      <section className="mb-12 sm:mb-16">
+        <h2 className="text-xl sm:text-2xl font-bold text-center tracking-tight text-slate-900 dark:text-white mb-6 sm:mb-8">
           Why use ZapPebble {tool.name}?
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+          <div className="p-5 sm:p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40">
             <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4">
               <Zap size={20} />
             </div>

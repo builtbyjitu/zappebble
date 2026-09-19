@@ -38,7 +38,7 @@ export function Modal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-150">
       <div
         className="fixed inset-0"
         onClick={onClose}
@@ -47,15 +47,16 @@ export function Modal({
       <div
         role="dialog"
         aria-modal="true"
+        aria-labelledby={title ? 'modal-title' : undefined}
         className={cn(
-          'relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden z-10 animate-in zoom-in-95 duration-200',
+          'relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden z-10 animate-in zoom-in-95 duration-150 max-h-[calc(100vh-2rem)] flex flex-col',
           className
         )}
       >
-        <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-800">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800 shrink-0">
           <div>
             {title && (
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+              <h3 id="modal-title" className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white">
                 {title}
               </h3>
             )}
@@ -67,13 +68,13 @@ export function Modal({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             aria-label="Close dialog"
           >
             <X size={18} />
           </button>
         </div>
-        <div className="p-5">{children}</div>
+        <div className="p-5 sm:p-6 overflow-y-auto flex-1">{children}</div>
       </div>
     </div>
   );

@@ -30,13 +30,18 @@ export function FAQ({ items, title = 'Frequently Asked Questions', className }: 
       <div className="divide-y divide-slate-200 dark:divide-slate-800 border-y border-slate-200 dark:border-slate-800">
         {items.map((item, index) => {
           const isOpen = openIndices.includes(index);
+          const buttonId = `faq-btn-${index}`;
+          const contentId = `faq-content-${index}`;
+
           return (
             <div key={index} className="py-4">
               <button
+                id={buttonId}
                 type="button"
                 onClick={() => toggleIndex(index)}
-                className="flex w-full items-center justify-between text-left font-medium text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                className="flex w-full items-center justify-between text-left font-medium text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-sm"
                 aria-expanded={isOpen}
+                aria-controls={contentId}
               >
                 <span className="text-sm sm:text-base font-semibold pr-4">
                   {item.question}
@@ -49,7 +54,12 @@ export function FAQ({ items, title = 'Frequently Asked Questions', className }: 
                 />
               </button>
               {isOpen && (
-                <div className="mt-2.5 text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed animate-in fade-in-50 duration-150">
+                <div
+                  id={contentId}
+                  role="region"
+                  aria-labelledby={buttonId}
+                  className="mt-2.5 text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed animate-in fade-in-50 duration-150"
+                >
                   {item.answer}
                 </div>
               )}

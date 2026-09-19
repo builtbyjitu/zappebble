@@ -18,40 +18,40 @@ export function Alert({
   className
 }: AlertProps) {
   const icons = {
-    info: <Info className="w-5 h-5 text-blue-500 shrink-0" />,
-    success: <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />,
-    warning: <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />,
-    error: <AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
+    info: <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />,
+    success: <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />,
+    warning: <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />,
+    error: <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0" />
   };
 
   const styles = {
-    info: 'bg-blue-50/80 dark:bg-blue-950/40 border-blue-200 dark:border-blue-900/60 text-blue-900 dark:text-blue-200',
-    success: 'bg-emerald-50/80 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900/60 text-emerald-900 dark:text-emerald-200',
-    warning: 'bg-amber-50/80 dark:bg-amber-950/40 border-amber-200 dark:border-amber-900/60 text-amber-900 dark:text-amber-200',
-    error: 'bg-red-50/80 dark:bg-red-950/40 border-red-200 dark:border-red-900/60 text-red-900 dark:text-red-200'
+    info: 'bg-blue-50/70 dark:bg-blue-950/30 border-blue-200/70 dark:border-blue-900/50 text-slate-800 dark:text-slate-200',
+    success: 'bg-emerald-50/70 dark:bg-emerald-950/30 border-emerald-200/70 dark:border-emerald-900/50 text-slate-800 dark:text-slate-200',
+    warning: 'bg-amber-50/70 dark:bg-amber-950/30 border-amber-200/70 dark:border-amber-900/50 text-slate-800 dark:text-slate-200',
+    error: 'bg-red-50/70 dark:bg-red-950/30 border-red-200/70 dark:border-red-900/50 text-slate-800 dark:text-slate-200'
   };
 
   return (
     <div
       role="alert"
       className={cn(
-        'flex items-start p-4 rounded-xl border transition-all text-sm',
+        'flex items-start p-3.5 sm:p-4 rounded-xl border text-xs sm:text-sm leading-relaxed transition-all shadow-2xs',
         styles[type],
         className
       )}
     >
-      <div className="mr-3 mt-0.5">{icons[type]}</div>
+      <div className="mr-2.5 mt-0.5">{icons[type]}</div>
       <div className="flex-1">
-        {title && <h5 className="font-semibold text-sm mb-0.5">{title}</h5>}
-        <div className="text-xs leading-relaxed opacity-90">{message}</div>
+        {title && <h5 className="font-semibold text-xs sm:text-sm mb-0.5 text-slate-900 dark:text-white">{title}</h5>}
+        <div className="opacity-90">{message}</div>
       </div>
       {onClose && (
         <button
           onClick={onClose}
-          className="ml-3 p-1 rounded-md opacity-70 hover:opacity-100 transition-opacity"
+          className="ml-2.5 -mr-1 p-1 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-black/5 dark:hover:bg-white/10 transition-colors focus:outline-none focus:ring-1 focus:ring-slate-400"
           aria-label="Close alert"
         >
-          <X className="w-4 h-4" />
+          <X className="w-3.5 h-3.5" />
         </button>
       )}
     </div>

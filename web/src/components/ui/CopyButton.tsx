@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Button, ButtonProps } from './Button';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, AlertCircle } from 'lucide-react';
 import { copyToClipboard } from '@webtools/shared';
 
 export interface CopyButtonProps extends Omit<ButtonProps, 'onClick'> {
@@ -10,6 +10,7 @@ export interface CopyButtonProps extends Omit<ButtonProps, 'onClick'> {
   onCopied?: () => void;
   label?: string;
   copiedLabel?: string;
+  errorLabel?: string;
 }
 
 export function CopyButton({
@@ -17,31 +18,43 @@ export function CopyButton({
   onCopied,
   label = 'Copy',
   copiedLabel = 'Copied!',
+  errorLabel = 'Failed',
   variant = 'outline',
   size = 'sm',
   ...props
 }: CopyButtonProps) {
-  const [copied, setCopied] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'copied' | 'error'>('idle');
 
   const handleCopy = async () => {
     const success = await copyToClipboard(textToCopy);
     if (success) {
-      setCopied(true);
+      setStatus('copied');
       onCopied?.();
-      setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => setStatus('idle'), 2000);
+    } else {
+      setStatus('error');
+      setTimeout(() => setStatus('idle'), 2500);
     }
   };
 
   return (
     <Button
       type="button"
-      variant={copied ? 'success' : variant}
+      variant={status === 'copied' ? 'success' : status === 'error' ? 'danger' : variant}
       size={size}
       onClick={handleCopy}
-      leftIcon={copied ? <Check size={14} /> : <Copy size={14} />}
+      leftIcon={
+        status === 'copied' ? (
+          <Check size={14} className="shrink-0" />
+        ) : status === 'error' ? (
+          <AlertCircle size={14} className="shrink-0" />
+        ) : (
+          <Copy size={14} className="shrink-0" />
+        )
+      }
       {...props}
     >
-      {copied ? copiedLabel : label}
+      {status === 'copied' ? copiedLabel : status === 'error' ? errorLabel : label}
     </Button>
   );
 }
