@@ -30,7 +30,9 @@ import {
   Lock,
   Unlock,
   Archive,
-  Image as ImageIcon
+  Image as ImageIcon,
+  ArrowRight,
+  RotateCcw
 } from 'lucide-react';
 
 export function ImageCompressorTool() {
@@ -156,7 +158,6 @@ export function ImageCompressorTool() {
 
     for (let i = 0; i < items.length; i++) {
       setCurrentProcessIndex(i + 1);
-      const currentItem = items[i];
 
       // Mark as processing
       setItems((prev) =>
@@ -164,7 +165,7 @@ export function ImageCompressorTool() {
       );
 
       try {
-        const result = await processImage(currentItem.file, options);
+        const result = await processImage(items[i].file, options);
 
         setItems((prev) =>
           prev.map((item, idx) =>
@@ -230,19 +231,20 @@ export function ImageCompressorTool() {
     totalOriginalBytes > 0 ? ((totalSavedBytes / totalOriginalBytes) * 100).toFixed(1) : '0';
 
   return (
-    <div className="space-y-8">
-      {/* Upload Zone when empty */}
+    <div className="space-y-6">
+      {/* 1. Upload Dropzone when empty */}
       {items.length === 0 && (
         <FileDropzone
           onFilesSelected={handleFilesAdded}
           accept=".jpg,.jpeg,.png,.webp"
           multiple={true}
           maxSizeMB={50}
-          title="Drop your images here, or click to browse"
-          subtitle="Supports JPG, PNG, and WebP • Multiple files supported"
+          title="Drop your image here, or choose a file"
+          subtitle="Supports JPG, PNG, and WebP • Up to 50MB per file • 100% Local"
         />
       )}
 
+      {/* Error notification */}
       {generalError && (
         <Alert
           type="error"
@@ -252,12 +254,18 @@ export function ImageCompressorTool() {
         />
       )}
 
+      {/* Live processing status announcement for screen readers */}
+      <div className="sr-only" role="status" aria-live="polite">
+        {isProcessing && `Compressing image ${currentProcessIndex} of ${items.length}`}
+        {!isProcessing && completedCount > 0 && `Compression complete for ${completedCount} images`}
+      </div>
+
       {items.length > 0 && (
         <div className="space-y-6">
-          {/* Top Action Bar & Settings Summary */}
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+          {/* 2. Top Selected Files Bar */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/90 dark:border-slate-800">
             <div className="flex items-center space-x-3">
-              <span className="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-sm">
+              <span className="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-sm shrink-0">
                 {items.length}
               </span>
               <div>
@@ -270,7 +278,7 @@ export function ImageCompressorTool() {
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
               <Button
                 variant="outline"
                 size="sm"
@@ -285,180 +293,215 @@ export function ImageCompressorTool() {
                   };
                   input.click();
                 }}
+                className="text-xs"
               >
-                Add More Images
+                {items.length === 1 ? 'Change / Add Image' : 'Add More Images'}
               </Button>
 
               <Button
                 variant="danger"
                 size="sm"
                 onClick={clearAll}
-                leftIcon={<Trash2 size={14} />}
+                leftIcon={<Trash2 size={13} />}
+                className="text-xs"
               >
-                Clear All
+                Clear
               </Button>
 
               <Button
                 variant="primary"
-                size="md"
+                size="sm"
                 onClick={runCompression}
+                disabled={isProcessing}
                 isLoading={isProcessing}
-                leftIcon={<Sparkles size={16} />}
-                className="grow md:grow-0"
+                leftIcon={<Sparkles size={15} />}
+                className="font-semibold shadow-xs"
               >
                 {isProcessing
                   ? `Compressing ${currentProcessIndex}/${items.length}...`
+                  : items.length === 1
+                  ? 'Compress Image'
                   : 'Compress All Images'}
               </Button>
             </div>
           </div>
 
-          {/* Compression Configuration Controls */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
-            {/* 1. Quality Slider */}
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center">
-                  <Sliders size={14} className="mr-1.5 text-blue-500" />
-                  Quality: {quality}%
-                </label>
-                <span className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950 px-2 py-0.5 rounded">
-                  {quality >= 85 ? 'High Quality' : quality >= 65 ? 'Balanced' : 'Max Compression'}
-                </span>
-              </div>
-              <input
-                type="range"
-                min="1"
-                max="100"
-                value={quality}
-                onChange={(e) => setQuality(Number(e.target.value))}
-                className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
-              />
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                Higher quality produces larger files. Lossy for JPG/WebP, lossless optimization for PNG.
-              </p>
-            </div>
+          {/* 3. Compression Settings Panel */}
+          <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs space-y-6">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center">
+              <Sliders size={14} className="mr-1.5 text-blue-500" />
+              <span>Compression Settings</span>
+            </h3>
 
-            {/* 2. Output Format Selector */}
-            <div className="space-y-2.5">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center">
-                <RefreshCw size={14} className="mr-1.5 text-blue-500" />
-                Output Format
-              </label>
-              <select
-                value={outputFormat}
-                onChange={(e) => setOutputFormat(e.target.value as OutputFormatOption)}
-                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="original">Same as original format</option>
-                <option value="image/jpeg">JPG (Best for photos & small files)</option>
-                <option value="image/webp">WebP (Modern high-efficiency format)</option>
-                <option value="image/png">PNG (Preserves transparency)</option>
-              </select>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                Select format or keep original. Converting transparent PNGs to JPG sets a white background.
-              </p>
-            </div>
-
-            {/* 3. Optional Resize Controls */}
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center">
-                  <Maximize2 size={14} className="mr-1.5 text-blue-500" />
-                  Optional Resize
-                </label>
-                <label className="inline-flex items-center cursor-pointer text-xs">
-                  <input
-                    type="checkbox"
-                    checked={resizeEnabled}
-                    onChange={(e) => setResizeEnabled(e.target.checked)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-blue-600 relative"></div>
-                  <span className="ml-1.5 text-[11px] text-slate-600 dark:text-slate-400">
-                    {resizeEnabled ? 'Active' : 'Off'}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Quality Slider */}
+              <fieldset className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label
+                    htmlFor="compressor-quality-slider"
+                    className="text-xs font-semibold text-slate-700 dark:text-slate-300"
+                  >
+                    Quality: {quality}%
+                  </label>
+                  <span className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/80 px-2 py-0.5 rounded">
+                    {quality >= 85 ? 'High Quality' : quality >= 65 ? 'Balanced' : 'Max Compression'}
                   </span>
-                </label>
-              </div>
+                </div>
+                <input
+                  id="compressor-quality-slider"
+                  type="range"
+                  min="1"
+                  max="100"
+                  value={quality}
+                  onChange={(e) => setQuality(Number(e.target.value))}
+                  className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                  aria-valuemin={1}
+                  aria-valuemax={100}
+                  aria-valuenow={quality}
+                />
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                  Higher quality preserves fine detail; lower quality creates smaller files.
+                </p>
+              </fieldset>
 
-              {resizeEnabled ? (
-                <div className="space-y-2">
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
+              {/* Output Format */}
+              <fieldset className="space-y-2">
+                <label
+                  htmlFor="compressor-output-format"
+                  className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center"
+                >
+                  <RefreshCw size={13} className="mr-1 text-blue-500" />
+                  <span>Output Format</span>
+                </label>
+                <select
+                  id="compressor-output-format"
+                  value={outputFormat}
+                  onChange={(e) => setOutputFormat(e.target.value as OutputFormatOption)}
+                  className="w-full h-9 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500"
+                >
+                  <option value="original">Keep original format</option>
+                  <option value="image/jpeg">JPG (Best for photos & small files)</option>
+                  <option value="image/webp">WebP (Modern high-efficiency format)</option>
+                  <option value="image/png">PNG (Preserves transparency)</option>
+                </select>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                  Select a specific format or preserve the input image&apos;s format.
+                </p>
+              </fieldset>
+
+              {/* Optional Resize Controls */}
+              <fieldset className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center">
+                    <Maximize2 size={13} className="mr-1 text-blue-500" />
+                    <span>Optional Resize</span>
+                  </label>
+                  <label className="inline-flex items-center cursor-pointer text-xs">
+                    <input
+                      type="checkbox"
+                      checked={resizeEnabled}
+                      onChange={(e) => setResizeEnabled(e.target.checked)}
+                      className="sr-only peer"
+                      aria-label="Enable image resizing"
+                    />
+                    <div className="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-blue-600 relative"></div>
+                    <span className="ml-1.5 text-[11px] text-slate-600 dark:text-slate-400">
+                      {resizeEnabled ? 'Active' : 'Off'}
+                    </span>
+                  </label>
+                </div>
+
+                {resizeEnabled ? (
+                  <div className="space-y-2">
+                    <div className="grid grid-cols-2 gap-2">
                       <input
                         type="number"
                         placeholder="Width (px)"
                         value={targetWidth}
                         onChange={(e) => setTargetWidth(e.target.value)}
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
+                        className="w-full h-8 px-2.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
+                        aria-label="Target width in pixels"
                       />
-                    </div>
-                    <div>
                       <input
                         type="number"
                         placeholder="Height (px)"
                         value={targetHeight}
                         onChange={(e) => setTargetHeight(e.target.value)}
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
+                        className="w-full h-8 px-2.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
+                        aria-label="Target height in pixels"
                       />
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => setLockAspect(!lockAspect)}
+                      className="flex items-center space-x-1.5 text-[11px] text-slate-500 hover:text-blue-600 transition-colors"
+                    >
+                      {lockAspect ? (
+                        <Lock size={12} className="text-blue-500" />
+                      ) : (
+                        <Unlock size={12} className="text-slate-400" />
+                      )}
+                      <span>{lockAspect ? 'Aspect ratio locked' : 'Free aspect ratio'}</span>
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setLockAspect(!lockAspect)}
-                    className="flex items-center space-x-1.5 text-[11px] text-slate-500 hover:text-blue-600"
-                  >
-                    {lockAspect ? (
-                      <Lock size={12} className="text-blue-500" />
-                    ) : (
-                      <Unlock size={12} className="text-slate-400" />
-                    )}
-                    <span>{lockAspect ? 'Aspect ratio locked' : 'Aspect ratio unlocked'}</span>
-                  </button>
-                </div>
-              ) : (
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Preserving original pixel dimensions. Toggle on to scale resolution down.
-                </p>
-              )}
+                ) : (
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                    Original pixel dimensions are preserved. Toggle on to scale down.
+                  </p>
+                )}
+              </fieldset>
             </div>
           </div>
 
-          {/* Aggregate Savings Summary Banner (if completed items exist) */}
+          {/* 4. Aggregate Savings Result Banner (when completed items exist) */}
           {completedCount > 0 && (
-            <div className="p-6 rounded-2xl bg-linear-to-r from-emerald-500/10 via-teal-500/10 to-blue-500/10 border border-emerald-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="space-y-1 text-center sm:text-left">
-                <div className="flex items-center justify-center sm:justify-start space-x-2">
-                  <CheckCircle2 size={18} className="text-emerald-500" />
+            <div
+              role="status"
+              className="p-5 sm:p-6 rounded-2xl bg-linear-to-r from-emerald-500/10 via-teal-500/10 to-blue-500/10 border border-emerald-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+            >
+              <div className="space-y-1">
+                <div className="flex items-center space-x-2">
+                  <CheckCircle2 size={18} className="text-emerald-500 shrink-0" />
                   <span className="font-bold text-sm text-slate-900 dark:text-white">
                     {completedCount === items.length
-                      ? `All ${items.length} images compressed successfully!`
+                      ? `All ${items.length} ${items.length === 1 ? 'image' : 'images'} compressed!`
                       : `${completedCount} of ${items.length} images processed`}
                   </span>
                 </div>
-                <p className="text-xs text-slate-600 dark:text-slate-300">
+                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                   Original: <span className="font-semibold">{formatBytes(totalOriginalBytes)}</span> → Compressed:{' '}
                   <span className="font-semibold text-emerald-600 dark:text-emerald-400">{formatBytes(totalCompressedBytes)}</span>{' '}
                   • Saved: <span className="font-bold text-emerald-600 dark:text-emerald-400">{formatBytes(totalSavedBytes)} ({totalReduction}%)</span>
                 </p>
               </div>
 
-              <Button
-                variant="success"
-                size="md"
-                onClick={downloadAllAsZip}
-                isLoading={isZipping}
-                leftIcon={<Archive size={16} />}
-                className="w-full sm:w-auto shadow-md"
-              >
-                {completedCount > 1 ? 'Download All as ZIP' : 'Download Compressed Image'}
-              </Button>
+              <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                <Button
+                  variant="success"
+                  size="md"
+                  onClick={downloadAllAsZip}
+                  isLoading={isZipping}
+                  leftIcon={<Download size={15} />}
+                  className="w-full sm:w-auto shadow-xs font-semibold"
+                >
+                  {completedCount > 1 ? 'Download All as ZIP' : 'Download Compressed Image'}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="md"
+                  onClick={clearAll}
+                  leftIcon={<RotateCcw size={14} />}
+                  className="w-full sm:w-auto text-xs"
+                >
+                  Compress More
+                </Button>
+              </div>
             </div>
           )}
 
-          {/* Image Cards List */}
+          {/* 5. Image Cards List */}
           <div className="space-y-3">
-            {items.map((item, index) => {
+            {items.map((item) => {
               const isDone = item.status === 'done';
               const isError = item.status === 'error';
               const isItemProcessing = item.status === 'processing';
@@ -466,11 +509,10 @@ export function ImageCompressorTool() {
               return (
                 <div
                   key={item.id}
-                  className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all shadow-xs"
+                  className="p-3.5 sm:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 transition-all shadow-2xs"
                 >
                   {/* Left: Thumbnail & Details */}
                   <div className="flex items-center space-x-3.5 min-w-0 flex-1">
-                    {/* Thumbnail preview (Before / After) */}
                     <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0 border border-slate-200 dark:border-slate-700">
                       {item.previewUrl ? (
                         <img
@@ -500,7 +542,7 @@ export function ImageCompressorTool() {
                         </span>
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+                      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 mt-1 text-[11px] text-slate-500 dark:text-slate-400">
                         {item.originalDimensions && (
                           <span>
                             {item.originalDimensions.width} × {item.originalDimensions.height} px
@@ -537,7 +579,8 @@ export function ImageCompressorTool() {
                         variant="primary"
                         size="sm"
                         onClick={() => downloadBlob(item.result!.blob, item.result!.filename)}
-                        leftIcon={<Download size={14} />}
+                        leftIcon={<Download size={13} />}
+                        className="text-xs font-semibold"
                       >
                         Download
                       </Button>
@@ -545,8 +588,8 @@ export function ImageCompressorTool() {
 
                     {isItemProcessing && (
                       <span className="text-xs text-blue-600 dark:text-blue-400 flex items-center font-medium">
-                        <RefreshCw size={13} className="animate-spin mr-1" />
-                        Processing...
+                        <RefreshCw size={13} className="animate-spin mr-1.5" />
+                        Compressing...
                       </span>
                     )}
 

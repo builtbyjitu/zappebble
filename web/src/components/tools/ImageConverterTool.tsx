@@ -31,8 +31,16 @@ import {
   Unlock,
   Archive,
   Image as ImageIcon,
-  ArrowRight
+  ArrowRight,
+  RotateCcw,
+  Check
 } from 'lucide-react';
+
+const FORMAT_OPTIONS: { mime: SupportedImageMime; label: string; desc: string }[] = [
+  { mime: 'image/webp', label: 'WebP', desc: 'Modern & small (Best for web)' },
+  { mime: 'image/png', label: 'PNG', desc: 'Lossless with transparency' },
+  { mime: 'image/jpeg', label: 'JPG', desc: 'Universal compatibility' }
+];
 
 export function ImageConverterTool() {
   const [items, setItems] = useState<ImageFileItem[]>([]);
@@ -217,7 +225,8 @@ export function ImageConverterTool() {
   const completedCount = items.filter((i) => i.status === 'done').length;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
+      {/* 1. File Upload Dropzone when empty */}
       {items.length === 0 && (
         <FileDropzone
           onFilesSelected={handleFilesAdded}
@@ -225,10 +234,11 @@ export function ImageConverterTool() {
           multiple={true}
           maxSizeMB={50}
           title="Drop your images here to convert"
-          subtitle="Convert between JPG, PNG, and WebP formats • Up to 50MB per file"
+          subtitle="Convert between JPG, PNG, and WebP formats • Up to 50MB per file • 100% Local"
         />
       )}
 
+      {/* Error Alert */}
       {generalError && (
         <Alert
           type="error"
@@ -238,12 +248,18 @@ export function ImageConverterTool() {
         />
       )}
 
+      {/* Screen Reader Live Status Announcement */}
+      <div className="sr-only" role="status" aria-live="polite">
+        {isProcessing && `Converting image ${currentProcessIndex} of ${items.length} to ${formatMimeLabel(targetFormat)}`}
+        {!isProcessing && completedCount > 0 && `Conversion complete for ${completedCount} images`}
+      </div>
+
       {items.length > 0 && (
         <div className="space-y-6">
-          {/* Action Bar */}
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+          {/* 2. Top Selected Files Bar */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/90 dark:border-slate-800">
             <div className="flex items-center space-x-3">
-              <span className="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-sm">
+              <span className="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-sm shrink-0">
                 {items.length}
               </span>
               <div>
@@ -256,7 +272,7 @@ export function ImageConverterTool() {
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
               <Button
                 variant="outline"
                 size="sm"
@@ -271,26 +287,29 @@ export function ImageConverterTool() {
                   };
                   input.click();
                 }}
+                className="text-xs"
               >
-                Add More Images
+                {items.length === 1 ? 'Change / Add Image' : 'Add More Images'}
               </Button>
 
               <Button
                 variant="danger"
                 size="sm"
                 onClick={clearAll}
-                leftIcon={<Trash2 size={14} />}
+                leftIcon={<Trash2 size={13} />}
+                className="text-xs"
               >
-                Clear All
+                Clear
               </Button>
 
               <Button
                 variant="primary"
-                size="md"
+                size="sm"
                 onClick={runConversion}
+                disabled={isProcessing}
                 isLoading={isProcessing}
-                leftIcon={<RefreshCw size={16} />}
-                className="grow md:grow-0"
+                leftIcon={<RefreshCw size={15} />}
+                className="font-semibold shadow-xs"
               >
                 {isProcessing
                   ? `Converting ${currentProcessIndex}/${items.length}...`
@@ -299,154 +318,204 @@ export function ImageConverterTool() {
             </div>
           </div>
 
-          {/* Configuration Settings */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
-            {/* 1. Target Format Selection */}
-            <div className="space-y-2.5">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center">
-                <RefreshCw size={14} className="mr-1.5 text-blue-500" />
-                Select Target Format
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { mime: 'image/webp' as SupportedImageMime, label: 'WebP', desc: 'Modern & small' },
-                  { mime: 'image/png' as SupportedImageMime, label: 'PNG', desc: 'Transparent' },
-                  { mime: 'image/jpeg' as SupportedImageMime, label: 'JPG', desc: 'Universal' }
-                ].map((fmt) => (
-                  <button
-                    key={fmt.mime}
-                    type="button"
-                    onClick={() => setTargetFormat(fmt.mime)}
-                    className={`p-3 rounded-xl border text-center transition-all ${
-                      targetFormat === fmt.mime
-                        ? 'border-blue-600 bg-blue-50/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold shadow-xs'
-                        : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-slate-700 dark:text-slate-300'
-                    }`}
-                  >
-                    <div className="text-sm">{fmt.label}</div>
-                    <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">{fmt.desc}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
+          {/* 3. Conversion Configuration Settings */}
+          <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs space-y-6">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center">
+              <Sparkles size={14} className="mr-1.5 text-blue-500" />
+              <span>Conversion Settings</span>
+            </h3>
 
-            {/* 2. Quality Slider (for lossy formats) */}
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                  Quality: {quality}%
-                </label>
-                <span className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950 px-2 py-0.5 rounded">
-                  {targetFormat === 'image/png' ? 'Lossless RGBA' : `${quality}% Encoding`}
-                </span>
-              </div>
-              <input
-                type="range"
-                min="1"
-                max="100"
-                value={quality}
-                disabled={targetFormat === 'image/png'}
-                onChange={(e) => setQuality(Number(e.target.value))}
-                className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600 disabled:opacity-40"
-              />
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                {targetFormat === 'image/png'
-                  ? 'PNG format uses lossless compression.'
-                  : 'Adjust encoding quality for JPG and WebP outputs.'}
-              </p>
-            </div>
-
-            {/* 3. Optional Resize */}
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center">
-                  <Maximize2 size={14} className="mr-1.5 text-blue-500" />
-                  Optional Resize
-                </label>
-                <label className="inline-flex items-center cursor-pointer text-xs">
-                  <input
-                    type="checkbox"
-                    checked={resizeEnabled}
-                    onChange={(e) => setResizeEnabled(e.target.checked)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-blue-600 relative"></div>
-                  <span className="ml-1.5 text-[11px] text-slate-600 dark:text-slate-400">
-                    {resizeEnabled ? 'Active' : 'Off'}
-                  </span>
-                </label>
-              </div>
-
-              {resizeEnabled ? (
-                <div className="space-y-2">
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="number"
-                      placeholder="Width (px)"
-                      value={targetWidth}
-                      onChange={(e) => setTargetWidth(e.target.value)}
-                      className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Height (px)"
-                      value={targetHeight}
-                      onChange={(e) => setTargetHeight(e.target.value)}
-                      className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setLockAspect(!lockAspect)}
-                    className="flex items-center space-x-1.5 text-[11px] text-slate-500 hover:text-blue-600"
-                  >
-                    {lockAspect ? (
-                      <Lock size={12} className="text-blue-500" />
-                    ) : (
-                      <Unlock size={12} className="text-slate-400" />
-                    )}
-                    <span>{lockAspect ? 'Lock aspect ratio' : 'Free aspect ratio'}</span>
-                  </button>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* 3A. Target Format Selection with Visual Radio Indicators */}
+              <fieldset className="space-y-2.5">
+                <legend className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center">
+                  <RefreshCw size={13} className="mr-1.5 text-blue-500" />
+                  <span>Select Target Format</span>
+                </legend>
+                <div
+                  role="radiogroup"
+                  aria-label="Target format"
+                  className="grid grid-cols-3 gap-2"
+                >
+                  {FORMAT_OPTIONS.map((fmt) => {
+                    const isSelected = targetFormat === fmt.mime;
+                    return (
+                      <button
+                        key={fmt.mime}
+                        type="button"
+                        role="radio"
+                        aria-checked={isSelected}
+                        onClick={() => setTargetFormat(fmt.mime)}
+                        className={`p-3 rounded-xl border text-left transition-all relative flex flex-col justify-between ${
+                          isSelected
+                            ? 'border-blue-600 bg-blue-50/80 dark:bg-blue-950/60 text-slate-900 dark:text-white shadow-xs'
+                            : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between w-full mb-1">
+                          <span className="text-sm font-bold">{fmt.label}</span>
+                          {/* Visual Radio Indicator */}
+                          <span
+                            className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
+                              isSelected
+                                ? 'border-blue-600 bg-blue-600 text-white'
+                                : 'border-slate-300 dark:border-slate-600 bg-transparent'
+                            }`}
+                          >
+                            {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                          </span>
+                        </div>
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">
+                          {fmt.desc}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
-              ) : (
+              </fieldset>
+
+              {/* 3B. Quality Slider */}
+              <fieldset className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <label
+                    htmlFor="converter-quality-slider"
+                    className="text-xs font-semibold text-slate-700 dark:text-slate-300"
+                  >
+                    Quality: {quality}%
+                  </label>
+                  <span className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/80 px-2 py-0.5 rounded">
+                    {targetFormat === 'image/png' ? 'Lossless RGBA' : `${quality}% Encoding`}
+                  </span>
+                </div>
+                <input
+                  id="converter-quality-slider"
+                  type="range"
+                  min="1"
+                  max="100"
+                  value={quality}
+                  disabled={targetFormat === 'image/png'}
+                  onChange={(e) => setQuality(Number(e.target.value))}
+                  className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600 disabled:opacity-40 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                  aria-valuemin={1}
+                  aria-valuemax={100}
+                  aria-valuenow={quality}
+                />
                 <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Preserve original dimensions during conversion.
+                  {targetFormat === 'image/png'
+                    ? 'PNG format uses lossless compression (quality setting disabled).'
+                    : 'Adjust encoding quality for JPG and WebP outputs.'}
                 </p>
-              )}
+              </fieldset>
+
+              {/* 3C. Optional Resize Controls */}
+              <fieldset className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center">
+                    <Maximize2 size={13} className="mr-1.5 text-blue-500" />
+                    <span>Optional Resize</span>
+                  </label>
+                  <label className="inline-flex items-center cursor-pointer text-xs">
+                    <input
+                      type="checkbox"
+                      checked={resizeEnabled}
+                      onChange={(e) => setResizeEnabled(e.target.checked)}
+                      className="sr-only peer"
+                      aria-label="Enable image resizing during conversion"
+                    />
+                    <div className="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-blue-600 relative"></div>
+                    <span className="ml-1.5 text-[11px] text-slate-600 dark:text-slate-400">
+                      {resizeEnabled ? 'Active' : 'Off'}
+                    </span>
+                  </label>
+                </div>
+
+                {resizeEnabled ? (
+                  <div className="space-y-2">
+                    <div className="grid grid-cols-2 gap-2">
+                      <input
+                        type="number"
+                        placeholder="Width (px)"
+                        value={targetWidth}
+                        onChange={(e) => setTargetWidth(e.target.value)}
+                        className="w-full h-8 px-2.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
+                        aria-label="Target width in pixels"
+                      />
+                      <input
+                        type="number"
+                        placeholder="Height (px)"
+                        value={targetHeight}
+                        onChange={(e) => setTargetHeight(e.target.value)}
+                        className="w-full h-8 px-2.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
+                        aria-label="Target height in pixels"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setLockAspect(!lockAspect)}
+                      className="flex items-center space-x-1.5 text-[11px] text-slate-500 hover:text-blue-600 transition-colors"
+                    >
+                      {lockAspect ? (
+                        <Lock size={12} className="text-blue-500" />
+                      ) : (
+                        <Unlock size={12} className="text-slate-400" />
+                      )}
+                      <span>{lockAspect ? 'Aspect ratio locked' : 'Free aspect ratio'}</span>
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                    Original pixel dimensions are preserved during conversion.
+                  </p>
+                )}
+              </fieldset>
             </div>
           </div>
 
-          {/* Batch Download Banner */}
+          {/* 4. Conversion Result Banner */}
           {completedCount > 0 && (
-            <div className="p-6 rounded-2xl bg-linear-to-r from-blue-500/10 via-indigo-500/10 to-teal-500/10 border border-blue-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="space-y-1 text-center sm:text-left">
-                <div className="flex items-center justify-center sm:justify-start space-x-2">
-                  <CheckCircle2 size={18} className="text-blue-500" />
+            <div
+              role="status"
+              className="p-5 sm:p-6 rounded-2xl bg-linear-to-r from-blue-500/10 via-indigo-500/10 to-teal-500/10 border border-blue-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+            >
+              <div className="space-y-1">
+                <div className="flex items-center space-x-2">
+                  <CheckCircle2 size={18} className="text-blue-500 shrink-0" />
                   <span className="font-bold text-sm text-slate-900 dark:text-white">
                     {completedCount === items.length
-                      ? `All ${items.length} images converted to ${formatMimeLabel(targetFormat)}!`
+                      ? `All ${items.length} ${items.length === 1 ? 'image' : 'images'} converted to ${formatMimeLabel(targetFormat)}!`
                       : `${completedCount} of ${items.length} images converted`}
                   </span>
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-300">
-                  Download all converted files in one local ZIP package.
+                  Ready to download. Files are packaged and saved directly in your browser.
                 </p>
               </div>
 
-              <Button
-                variant="primary"
-                size="md"
-                onClick={downloadAllAsZip}
-                isLoading={isZipping}
-                leftIcon={<Archive size={16} />}
-                className="w-full sm:w-auto shadow-md"
-              >
-                {completedCount > 1 ? 'Download All as ZIP' : 'Download Converted Image'}
-              </Button>
+              <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                <Button
+                  variant="primary"
+                  size="md"
+                  onClick={downloadAllAsZip}
+                  isLoading={isZipping}
+                  leftIcon={completedCount > 1 ? <Archive size={15} /> : <Download size={15} />}
+                  className="w-full sm:w-auto shadow-xs font-semibold"
+                >
+                  {completedCount > 1 ? 'Download All as ZIP' : 'Download Converted Image'}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="md"
+                  onClick={clearAll}
+                  leftIcon={<RotateCcw size={14} />}
+                  className="w-full sm:w-auto text-xs"
+                >
+                  Convert More
+                </Button>
+              </div>
             </div>
           )}
 
-          {/* Items List */}
+          {/* 5. Converted / Queued Items List */}
           <div className="space-y-3">
             {items.map((item) => {
               const isDone = item.status === 'done';
@@ -456,15 +525,22 @@ export function ImageConverterTool() {
               return (
                 <div
                   key={item.id}
-                  className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs"
+                  className="p-3.5 sm:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 shadow-2xs"
                 >
+                  {/* Left: Thumbnail & Details */}
                   <div className="flex items-center space-x-3.5 min-w-0 flex-1">
                     <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0 border border-slate-200 dark:border-slate-700">
-                      <img
-                        src={isDone && item.result?.url ? item.result.url : item.previewUrl}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                      />
+                      {item.previewUrl ? (
+                        <img
+                          src={isDone && item.result?.url ? item.result.url : item.previewUrl}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-slate-400">
+                          <ImageIcon size={20} />
+                        </div>
+                      )}
                       {isDone && (
                         <span className="absolute bottom-0 right-0 bg-blue-600 text-white text-[9px] font-bold px-1 rounded-tl">
                           ✓
@@ -490,7 +566,7 @@ export function ImageConverterTool() {
                         )}
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+                      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 mt-1 text-[11px] text-slate-500 dark:text-slate-400">
                         {item.originalDimensions && (
                           <span>
                             {item.originalDimensions.width} × {item.originalDimensions.height} px
@@ -517,13 +593,15 @@ export function ImageConverterTool() {
                     </div>
                   </div>
 
+                  {/* Right: Actions */}
                   <div className="flex items-center space-x-2 w-full sm:w-auto justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800">
                     {isDone && item.result && (
                       <Button
                         variant="primary"
                         size="sm"
                         onClick={() => downloadBlob(item.result!.blob, item.result!.filename)}
-                        leftIcon={<Download size={14} />}
+                        leftIcon={<Download size={13} />}
+                        className="text-xs font-semibold"
                       >
                         Download
                       </Button>
@@ -531,7 +609,7 @@ export function ImageConverterTool() {
 
                     {isItemProcessing && (
                       <span className="text-xs text-blue-600 dark:text-blue-400 flex items-center font-medium">
-                        <RefreshCw size={13} className="animate-spin mr-1" />
+                        <RefreshCw size={13} className="animate-spin mr-1.5" />
                         Converting...
                       </span>
                     )}
@@ -557,3 +635,4 @@ export function ImageConverterTool() {
     </div>
   );
 }
+
