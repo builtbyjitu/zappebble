@@ -14,7 +14,8 @@ import {
   AlignLeft,
   BookOpen,
   Sparkles,
-  ShieldCheck
+  ShieldCheck,
+  RotateCcw
 } from 'lucide-react';
 
 const SAMPLE_TEXT = `Welcome to ZapPebble Word and Character Counter!
@@ -26,6 +27,7 @@ Whether you are crafting an X (Twitter) post, optimizing an SEO meta description
 export function WordCounterTool() {
   const [text, setText] = useState<string>(SAMPLE_TEXT);
   const [selectedBenchmarkId, setSelectedBenchmarkId] = useState<string>('twitter');
+  const [statusMessage, setStatusMessage] = useState<string>('');
 
   const stats = useMemo(() => {
     return analyzeText(text);
@@ -41,11 +43,27 @@ export function WordCounterTool() {
   const benchmarkRemaining = selectedBenchmark.limit - stats.characters;
   const isBenchmarkOver = benchmarkRemaining < 0;
 
+  const handleClear = () => {
+    setText('');
+    setStatusMessage('Text cleared');
+  };
+
+  const handleLoadSample = () => {
+    setText(SAMPLE_TEXT);
+    setStatusMessage('Sample text loaded');
+  };
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
+      {/* Screen Reader Live Region for Discrete Actions */}
+      <div className="sr-only" role="status" aria-live="polite">
+        {statusMessage}
+      </div>
+
       {/* Primary Statistics Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <div className="p-4 rounded-2xl bg-blue-50/50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50 text-center">
+        {/* 1. Words */}
+        <div className="p-4 rounded-2xl bg-blue-50/60 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50 text-center transition-all">
           <span className="text-[11px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 block mb-1">
             Words
           </span>
@@ -54,7 +72,8 @@ export function WordCounterTool() {
           </span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-indigo-50/50 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/50 text-center">
+        {/* 2. Characters */}
+        <div className="p-4 rounded-2xl bg-indigo-50/60 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/50 text-center transition-all">
           <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 block mb-1">
             Characters
           </span>
@@ -63,7 +82,8 @@ export function WordCounterTool() {
           </span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-teal-50/50 dark:bg-teal-950/30 border border-teal-100 dark:border-teal-900/50 text-center">
+        {/* 3. Characters Without Spaces */}
+        <div className="p-4 rounded-2xl bg-teal-50/60 dark:bg-teal-950/30 border border-teal-100 dark:border-teal-900/50 text-center transition-all">
           <span className="text-[11px] font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400 block mb-1">
             No Spaces
           </span>
@@ -72,7 +92,8 @@ export function WordCounterTool() {
           </span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-purple-50/50 dark:bg-purple-950/30 border border-purple-100 dark:border-purple-900/50 text-center">
+        {/* 4. Sentences */}
+        <div className="p-4 rounded-2xl bg-purple-50/60 dark:bg-purple-950/30 border border-purple-100 dark:border-purple-900/50 text-center transition-all">
           <span className="text-[11px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400 block mb-1">
             Sentences
           </span>
@@ -81,7 +102,8 @@ export function WordCounterTool() {
           </span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-amber-50/50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/50 text-center">
+        {/* 5. Paragraphs */}
+        <div className="p-4 rounded-2xl bg-amber-50/60 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/50 text-center transition-all">
           <span className="text-[11px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 block mb-1">
             Paragraphs
           </span>
@@ -90,7 +112,8 @@ export function WordCounterTool() {
           </span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/50 text-center">
+        {/* 6. Approx. Reading Time */}
+        <div className="p-4 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/50 text-center transition-all">
           <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block mb-1">
             Reading Time
           </span>
@@ -102,91 +125,126 @@ export function WordCounterTool() {
 
       {/* Editor & Actions Toolbar */}
       <div className="space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
+        {/* Actions Bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-0.5">
           <div className="flex items-center space-x-2">
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setText(SAMPLE_TEXT)}
+              onClick={handleLoadSample}
+              className="text-xs font-semibold"
             >
               Load Sample
             </Button>
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setText('')}
-              leftIcon={<Trash2 size={14} />}
+              onClick={handleClear}
+              leftIcon={<Trash2 size={13} />}
+              className="text-xs text-slate-500 hover:text-red-600 dark:hover:text-red-400"
             >
-              Clear
+              Clear Text
             </Button>
           </div>
 
-          <div className="flex items-center space-x-2">
-            <CopyButton textToCopy={text} label="Copy Text" />
+          <div className="flex items-center space-x-2 justify-end">
+            <CopyButton
+              textToCopy={text}
+              label="Copy Text"
+              onCopied={() => setStatusMessage('Text copied to clipboard')}
+            />
           </div>
         </div>
 
         {/* Text Input Area */}
-        <div className="relative rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden shadow-xs focus-within:ring-2 focus-within:ring-blue-500 transition-all">
+        <div className="relative rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden shadow-2xs focus-within:ring-2 focus-within:ring-blue-500/30 focus-within:border-blue-500 transition-all">
+          <label htmlFor="word-counter-textarea" className="sr-only">
+            Text to analyze
+          </label>
           <textarea
+            id="word-counter-textarea"
             rows={12}
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Paste or type your text here to count words, characters, and sentences in real time..."
-            className="w-full p-5 text-sm sm:text-base leading-relaxed bg-transparent text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none resize-y min-h-[250px]"
+            className="w-full p-4 sm:p-5 text-sm sm:text-base leading-relaxed bg-transparent text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none resize-y min-h-[260px]"
           />
 
-          <div className="px-5 py-2.5 bg-slate-50 dark:bg-slate-950/60 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center space-x-4">
-              <span>Lines: <strong>{stats.lines}</strong></span>
+          {/* Empty State Prompt */}
+          {!text.trim() && (
+            <div className="px-5 pb-3 text-xs text-slate-400 dark:text-slate-500 italic">
+              Start typing or paste your text to see live statistics.
+            </div>
+          )}
+
+          {/* Secondary Details Footer */}
+          <div className="px-4 sm:px-5 py-2.5 bg-slate-50/80 dark:bg-slate-950/60 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 flex flex-wrap items-center justify-between gap-2.5">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+              <span>
+                Lines: <strong>{stats.lines}</strong>
+              </span>
               {stats.longestWord && (
-                <span>Longest Word: <strong className="font-mono">{stats.longestWord}</strong> ({stats.longestWord.length} chars)</span>
+                <span>
+                  Longest Word: <strong className="font-mono">{stats.longestWord}</strong> ({stats.longestWord.length} chars)
+                </span>
               )}
               {stats.averageWordLength > 0 && (
-                <span>Avg Word Length: <strong>{stats.averageWordLength}</strong> chars</span>
+                <span>
+                  Avg Word Length: <strong>{stats.averageWordLength}</strong> chars
+                </span>
               )}
             </div>
-            <div className="flex items-center text-emerald-600 dark:text-emerald-400 font-medium">
-              <ShieldCheck size={13} className="mr-1" />
-              <span>Processed locally in browser</span>
+
+            <div className="flex items-center text-emerald-600 dark:text-emerald-400 font-medium shrink-0">
+              <ShieldCheck size={14} className="mr-1.5 shrink-0" />
+              <span>100% Client-Side • Local in Browser</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Social Media & SEO Benchmarks Section */}
-      <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
+      <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3.5">
           <div>
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
               Character Limit Benchmarks
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Check your text length against popular social media and SEO guidelines.
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Approximate guidelines for common social platforms and search engine snippets.
             </p>
           </div>
 
-          {/* Benchmark selector */}
-          <div className="flex items-center space-x-1">
-            {SOCIAL_BENCHMARKS.map((b) => (
-              <button
-                key={b.id}
-                type="button"
-                onClick={() => setSelectedBenchmarkId(b.id)}
-                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
-                  selectedBenchmarkId === b.id
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
-                }`}
-              >
-                {b.name}
-              </button>
-            ))}
+          {/* Benchmark Selector with Semantic Radiogroup */}
+          <div
+            role="radiogroup"
+            aria-label="Character limit benchmark"
+            className="flex flex-wrap items-center gap-1.5"
+          >
+            {SOCIAL_BENCHMARKS.map((b) => {
+              const isSelected = selectedBenchmarkId === b.id;
+              return (
+                <button
+                  key={b.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={isSelected}
+                  onClick={() => setSelectedBenchmarkId(b.id)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                    isSelected
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  }`}
+                >
+                  {b.name}
+                </button>
+              );
+            })}
           </div>
         </div>
 
         {/* Active Benchmark Status Bar */}
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           <div className="flex items-center justify-between text-xs">
             <span className="font-semibold text-slate-700 dark:text-slate-300">
               {selectedBenchmark.name} (Limit: {selectedBenchmark.limit} chars)
@@ -200,7 +258,7 @@ export function WordCounterTool() {
             >
               {stats.characters} / {selectedBenchmark.limit} characters{' '}
               {isBenchmarkOver
-                ? `(${Math.abs(benchmarkRemaining)} over)`
+                ? `(${Math.abs(benchmarkRemaining)} over limit)`
                 : `(${benchmarkRemaining} remaining)`}
             </span>
           </div>
@@ -222,10 +280,11 @@ export function WordCounterTool() {
           </div>
 
           <p className="text-[11px] text-slate-500 dark:text-slate-400">
-            {selectedBenchmark.description}. Note: These are common guidelines rather than strict rules.
+            {selectedBenchmark.description}. Approximate guideline — actual search snippet display may vary based on pixel width.
           </p>
         </div>
       </div>
     </div>
   );
 }
+
